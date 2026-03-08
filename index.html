@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>PCI Scanner - Leitor QR Code Baserow</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PCI Scanner - Leitor QR Code</title>
     <!-- Fontes e ícones -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -39,7 +41,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
         }
 
         .app-header {
@@ -49,13 +51,13 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .header-logo {
             width: 44px;
             height: 44px;
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 14px;
             display: flex;
             align-items: center;
@@ -99,7 +101,7 @@
             padding: 20px;
             margin-bottom: 16px;
             box-shadow: 0 4px 12px rgba(0, 20, 40, 0.04);
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .card-title {
@@ -154,9 +156,9 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            border: 3px solid rgba(255,255,255,0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 24px;
-            box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
+            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
         }
 
         .scanner-line {
@@ -168,9 +170,17 @@
         }
 
         @keyframes scan {
-            0% { top: 0; }
-            50% { top: 100%; }
-            100% { top: 0; }
+            0% {
+                top: 0;
+            }
+
+            50% {
+                top: 100%;
+            }
+
+            100% {
+                top: 0;
+            }
         }
 
         .btn-scanner {
@@ -202,27 +212,10 @@
             border: 1px solid #1E3B5A;
         }
 
-        .config-button {
-            background: rgba(30, 59, 90, 0.1);
-            color: #1E3B5A;
+        .btn-scanner.danger {
+            background: linear-gradient(145deg, #dc3545, #bb2d3b);
+            color: white;
             border: none;
-            padding: 10px 16px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-            backdrop-filter: blur(5px);
-        }
-
-        .config-button i {
-            font-size: 0.9rem;
-        }
-
-        .config-button:active {
-            background: rgba(30, 59, 90, 0.2);
         }
 
         .qr-info {
@@ -237,7 +230,7 @@
             align-items: center;
             gap: 12px;
             padding: 8px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .qr-info-item:last-child {
@@ -319,7 +312,7 @@
             border-radius: 40px;
             padding: 4px;
             margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         }
 
         .tab {
@@ -353,6 +346,7 @@
             padding: 14px;
             margin-bottom: 10px;
             border-left: 4px solid #1E3B5A;
+            position: relative;
         }
 
         .etiqueta-header {
@@ -398,6 +392,73 @@
             color: #13293D;
         }
 
+        .etiqueta-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .etiqueta-action-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1E3B5A;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+        }
+
+        .etiqueta-action-btn:hover {
+            background: white;
+            transform: scale(1.05);
+        }
+
+        .etiqueta-action-btn.danger {
+            color: #dc3545;
+        }
+
+        .etiqueta-action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .historico-header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .btn-clear-all {
+            background: none;
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-clear-all:hover {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-clear-all:active {
+            transform: scale(0.95);
+        }
+
         .loading {
             display: flex;
             flex-direction: column;
@@ -417,7 +478,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .app-footer {
@@ -435,7 +498,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
@@ -499,7 +562,7 @@
             background: white;
             border-radius: 30px;
             padding: 10px 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             z-index: 2000;
             display: flex;
             align-items: center;
@@ -509,8 +572,15 @@
         }
 
         @keyframes slideDown {
-            from { top: -50px; opacity: 0; }
-            to { top: 16px; opacity: 1; }
+            from {
+                top: -50px;
+                opacity: 0;
+            }
+
+            to {
+                top: 16px;
+                opacity: 1;
+            }
         }
 
         .config-section {
@@ -577,6 +647,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="app-container">
         <!-- Header -->
@@ -586,16 +657,9 @@
             </div>
             <div class="header-text">
                 <h1>PCI Scanner</h1>
-                <p>Leitor QR Code • Baserow</p>
+                <p>Leitor QR Code</p>
             </div>
             <div class="connection-status" id="connectionStatus"></div>
-        </div>
-
-        <!-- Botão de Configuração Discreto -->
-        <div style="padding: 8px 16px 0 16px; display: flex; justify-content: flex-end;">
-            <button class="config-button" onclick="switchTab('config')">
-                <i class="fas fa-cog"></i> Configurar API
-            </button>
         </div>
 
         <!-- Área de Conteúdo -->
@@ -607,6 +671,9 @@
                 </div>
                 <div class="tab" onclick="switchTab('historico')" id="tabHistorico">
                     <i class="fas fa-history"></i> Histórico
+                </div>
+                <div class="tab" onclick="switchTab('config')" id="tabConfig">
+                    <i class="fas fa-cog"></i> Config
                 </div>
             </div>
 
@@ -635,7 +702,8 @@
                 <button class="btn-scanner" onclick="startScanner()" id="startScannerBtn">
                     <i class="fas fa-play"></i> Iniciar Scanner
                 </button>
-                <button class="btn-scanner secondary" onclick="stopScanner()" id="stopScannerBtn" style="display: none;">
+                <button class="btn-scanner secondary" onclick="stopScanner()" id="stopScannerBtn"
+                    style="display: none;">
                     <i class="fas fa-stop"></i> Parar Scanner
                 </button>
 
@@ -711,16 +779,21 @@
 
                 <div class="loading" id="loadingIndicator" style="display: none;">
                     <div class="spinner"></div>
-                    <p>Consultando dados no Baserow...</p>
+                    <p>Consultando dados...</p>
                 </div>
             </div>
 
             <!-- Tab Histórico -->
             <div id="historicoTab" class="tab-content hidden">
                 <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-history"></i>
-                        <span>Últimas Leituras</span>
+                    <div class="historico-header-actions">
+                        <div class="card-title" style="margin-bottom: 0;">
+                            <i class="fas fa-history"></i>
+                            <span>Últimas Leituras</span>
+                        </div>
+                        <button class="btn-clear-all" onclick="confirmarLimparHistorico()" id="btnLimparHistorico">
+                            <i class="fas fa-trash-alt"></i> Limpar tudo
+                        </button>
                     </div>
 
                     <div id="historicoLista">
@@ -737,18 +810,20 @@
             <div id="configTab" class="tab-content hidden">
                 <div class="config-section">
                     <div class="config-section-title">
-                        <i class="fas fa-database"></i> Conexão Baserow
+                        <i class="fas fa-database"></i> Conexão API
                     </div>
-                    
+
                     <div class="config-label">URL da API</div>
-                    <input type="text" class="config-input" id="baserowUrl" placeholder="https://api.baserow.io/api/" value="https://api.baserow.io/api/">
-                    
+                    <input type="text" class="config-input" id="baserowUrl" placeholder="https://api.exemplo.com/"
+                        value="https://api.baserow.io/api/">
+
                     <div class="config-label">Token da Base</div>
                     <input type="password" class="config-input" id="baserowToken" placeholder="Token de autenticação">
-                    
+
                     <div class="config-label" style="margin-top: 8px;">ID Tabela Extintores</div>
-                    <input type="text" class="config-input" id="tableExtintores" placeholder="ID da tabela de extintores">
-                    
+                    <input type="text" class="config-input" id="tableExtintores"
+                        placeholder="ID da tabela de extintores">
+
                     <div class="config-label">ID Tabela Clientes</div>
                     <input type="text" class="config-input" id="tableClientes" placeholder="ID da tabela de clientes">
 
@@ -767,8 +842,8 @@
                         <i class="fas fa-info-circle"></i> Sobre
                     </div>
                     <p style="color: #4A5B6E; font-size: 0.85rem; line-height: 1.5;">
-                        <strong>PCI Scanner v1.1</strong><br>
-                        Leitor de QR Code integrado ao Baserow.<br>
+                        <strong>PCI Scanner v1.2</strong><br>
+                        Leitor de QR Code para extintores.<br>
                         Aponte a câmera para um QR Code para visualizar os dados.
                     </p>
                 </div>
@@ -788,7 +863,7 @@
                 <i class="fas fa-camera"></i> Acesso à Câmera
             </div>
             <p style="color: #4A5B6E; margin-bottom: 16px;">
-                Para ler QR Codes, precisamos acessar sua câmera traseira. 
+                Para ler QR Codes, precisamos acessar sua câmera traseira.
                 Por favor, permita o acesso quando solicitado pelo navegador.
             </p>
             <div class="modal-buttons">
@@ -798,6 +873,22 @@
                 <button class="btn-secondary" onclick="fecharModalPermissao()">
                     Agora não
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="modal-overlay hidden" id="modalConfirmacao">
+        <div class="modal-content">
+            <div class="modal-title">
+                <i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i> Confirmar
+            </div>
+            <p style="color: #4A5B6E; margin-bottom: 16px;" id="modalConfirmacaoMensagem">
+                Tem certeza que deseja remover este item?
+            </p>
+            <div class="modal-buttons">
+                <button class="btn-primary" id="modalConfirmarBtn">Confirmar</button>
+                <button class="btn-secondary" onclick="fecharModalConfirmacao()">Cancelar</button>
             </div>
         </div>
     </div>
@@ -814,8 +905,9 @@
         let isScanning = false;
         let historicoLeituras = JSON.parse(localStorage.getItem('historicoLeituras')) || [];
         let ultimoQRCode = null;
+        let itemParaRemover = null;
 
-        // Configuração Baserow
+        // Configuração da API
         let baserowConfig = {
             url: 'https://api.baserow.io/api/',
             token: '',
@@ -843,7 +935,7 @@
         }
 
         // Salvar configurações
-        window.salvarConfig = function() {
+        window.salvarConfig = function () {
             baserowConfig = {
                 url: document.getElementById('baserowUrl').value,
                 token: document.getElementById('baserowToken').value,
@@ -858,8 +950,8 @@
             verificarConexao();
         };
 
-        // Testar conexão com Baserow
-        window.testarConexao = async function() {
+        // Testar conexão com a API
+        window.testarConexao = async function () {
             if (!baserowConfig.token) {
                 mostrarNotificacao('❌ Token não configurado', 'error');
                 return;
@@ -877,7 +969,7 @@
                 });
 
                 if (response.ok) {
-                    mostrarNotificacao('✅ Conexão com Baserow estabelecida!', 'success');
+                    mostrarNotificacao('✅ Conexão estabelecida!', 'success');
                     document.getElementById('connectionStatus').style.background = '#4CAF50';
                 } else {
                     mostrarNotificacao('❌ Falha na conexão', 'error');
@@ -914,7 +1006,7 @@
             try {
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const cameras = devices.filter(d => d.kind === 'videoinput');
-                
+
                 if (cameras.length === 0) {
                     mostrarNotificacao('⚠️ Nenhuma câmera encontrada', 'warning');
                     document.getElementById('permissaoCameraCard').style.display = 'block';
@@ -932,15 +1024,15 @@
         }
 
         // Solicitar permissão da câmera
-        window.solicitarPermissaoCamera = function() {
+        window.solicitarPermissaoCamera = function () {
             document.getElementById('modalPermissaoCamera').classList.remove('hidden');
         };
 
-        window.solicitarPermissaoCameraAgora = async function() {
+        window.solicitarPermissaoCameraAgora = async function () {
             fecharModalPermissao();
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment' } 
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
                 });
                 stream.getTracks().forEach(track => track.stop());
                 document.getElementById('permissaoCameraCard').style.display = 'none';
@@ -950,14 +1042,14 @@
             }
         };
 
-        window.fecharModalPermissao = function() {
+        window.fecharModalPermissao = function () {
             document.getElementById('modalPermissaoCamera').classList.add('hidden');
         };
 
         // Iniciar scanner
-        window.startScanner = async function() {
+        window.startScanner = async function () {
             if (!baserowConfig.token || !baserowConfig.tables.extintores) {
-                mostrarNotificacao('⚠️ Configure a API do Baserow primeiro', 'warning');
+                mostrarNotificacao('⚠️ Configure a API primeiro', 'warning');
                 switchTab('config');
                 return;
             }
@@ -984,9 +1076,9 @@
                     { facingMode: "environment" },
                     { fps: 10, qrbox: { width: 250, height: 250 } },
                     qrCodeSuccessCallback,
-                    () => {}
+                    () => { }
                 );
-                
+
                 isScanning = true;
                 document.getElementById('startScannerBtn').style.display = 'none';
                 document.getElementById('stopScannerBtn').style.display = 'block';
@@ -998,7 +1090,7 @@
         };
 
         // Parar scanner
-        window.stopScanner = function() {
+        window.stopScanner = function () {
             if (html5QrcodeScanner && isScanning) {
                 html5QrcodeScanner.stop().then(() => {
                     isScanning = false;
@@ -1012,7 +1104,7 @@
         async function handleQRCode(qrData) {
             // O QR Code contém o ID do extintor (ex: "EXT001")
             let extintorId = qrData.trim();
-            
+
             if (!extintorId) {
                 mostrarNotificacao('❌ QR Code inválido', 'error');
                 return;
@@ -1022,7 +1114,7 @@
             document.getElementById('qrIdDisplay').textContent = extintorId;
             document.getElementById('qrResultCard').style.display = 'block';
             document.getElementById('loadingIndicator').style.display = 'flex';
-            
+
             document.getElementById('qrExtintorId').textContent = 'Consultando...';
             document.getElementById('qrClienteNome').textContent = 'Aguarde...';
 
@@ -1038,17 +1130,17 @@
             try {
                 // Buscar dados do extintor
                 const extintorData = await buscarExtintor(extintorId);
-                
+
                 if (extintorData) {
                     document.getElementById('qrExtintorId').textContent = extintorId;
-                    
+
                     // Preencher dados do extintor
                     document.getElementById('extClasse').textContent = extintorData.classe || '-';
                     document.getElementById('extTipo').textContent = extintorData.tipo || '-';
                     document.getElementById('extKg').textContent = extintorData.carga || '-';
                     document.getElementById('extValidade').textContent = formatarData(extintorData.validade) || '-';
                     document.getElementById('extRecarga').textContent = formatarData(extintorData.recarga) || '-';
-                    
+
                     // Buscar dados do cliente se tiver ID
                     if (extintorData.clienteId) {
                         const clienteData = await buscarCliente(extintorData.clienteId);
@@ -1056,10 +1148,10 @@
                     } else {
                         document.getElementById('qrClienteNome').textContent = extintorData.clienteNome || 'N/I';
                     }
-                    
+
                     // Local
                     document.getElementById('extLocal').textContent = extintorData.local || '-';
-                    
+
                     // Se tiver ID da etiqueta nos dados
                     if (extintorData.etiquetaId) {
                         document.getElementById('extEtiquetaId').textContent = extintorData.etiquetaId;
@@ -1089,10 +1181,10 @@
             }
         }
 
-        // Buscar extintor no Baserow
+        // Buscar extintor na API
         async function buscarExtintor(extintorId) {
             if (!baserowConfig.token || !baserowConfig.tables.extintores) {
-                throw new Error('Configuração do Baserow incompleta');
+                throw new Error('Configuração da API incompleta');
             }
 
             try {
@@ -1108,15 +1200,15 @@
                 );
 
                 if (!response.ok) {
-                    throw new Error('Erro ao consultar Baserow');
+                    throw new Error('Erro ao consultar API');
                 }
 
                 const data = await response.json();
-                
+
                 if (data.results && data.results.length > 0) {
                     const extintor = data.results[0];
-                    
-                    // Extrair dados baseado nos campos da imagem
+
+                    // Extrair dados
                     return {
                         classe: extintor.Classe || extintor.classe || '-',
                         tipo: extintor.Tipo || extintor.tipo || '-',
@@ -1137,7 +1229,7 @@
             }
         }
 
-        // Buscar cliente no Baserow
+        // Buscar cliente na API
         async function buscarCliente(clienteId) {
             if (!baserowConfig.token || !baserowConfig.tables.clientes || !clienteId) {
                 return null;
@@ -1176,19 +1268,70 @@
         // Adicionar ao histórico
         function adicionarAoHistorico(item) {
             historicoLeituras.unshift(item);
-            
+
             if (historicoLeituras.length > 20) {
                 historicoLeituras = historicoLeituras.slice(0, 20);
             }
-            
+
             localStorage.setItem('historicoLeituras', JSON.stringify(historicoLeituras));
             atualizarHistorico();
         }
 
+        // Remover item do histórico
+        function removerDoHistorico(index) {
+            if (index >= 0 && index < historicoLeituras.length) {
+                historicoLeituras.splice(index, 1);
+                localStorage.setItem('historicoLeituras', JSON.stringify(historicoLeituras));
+                atualizarHistorico();
+                mostrarNotificacao('✅ Item removido do histórico', 'success');
+            }
+        }
+
+        // Limpar todo o histórico
+        function limparHistorico() {
+            historicoLeituras = [];
+            localStorage.setItem('historicoLeituras', JSON.stringify(historicoLeituras));
+            atualizarHistorico();
+            fecharModalConfirmacao();
+            mostrarNotificacao('✅ Histórico limpo com sucesso', 'success');
+        }
+
+        // Confirmar remoção de item
+        window.confirmarRemocao = function (index) {
+            itemParaRemover = index;
+            document.getElementById('modalConfirmacaoMensagem').textContent = 'Tem certeza que deseja remover este item do histórico?';
+            document.getElementById('modalConfirmarBtn').onclick = function () {
+                if (itemParaRemover !== null) {
+                    removerDoHistorico(itemParaRemover);
+                    itemParaRemover = null;
+                }
+            };
+            document.getElementById('modalConfirmacao').classList.remove('hidden');
+        };
+
+        // Confirmar limpar histórico
+        window.confirmarLimparHistorico = function () {
+            if (historicoLeituras.length === 0) {
+                mostrarNotificacao('ℹ️ Histórico já está vazio', 'info');
+                return;
+            }
+
+            itemParaRemover = null;
+            document.getElementById('modalConfirmacaoMensagem').textContent = 'Tem certeza que deseja limpar todo o histórico?';
+            document.getElementById('modalConfirmarBtn').onclick = limparHistorico;
+            document.getElementById('modalConfirmacao').classList.remove('hidden');
+        };
+
+        // Fechar modal de confirmação
+        window.fecharModalConfirmacao = function () {
+            document.getElementById('modalConfirmacao').classList.add('hidden');
+            itemParaRemover = null;
+        };
+
         // Atualizar lista de histórico
         function atualizarHistorico() {
             const lista = document.getElementById('historicoLista');
-            
+
             if (historicoLeituras.length === 0) {
                 lista.innerHTML = `
                     <div style="text-align: center; padding: 30px; color: #6B7A8F;">
@@ -1200,9 +1343,14 @@
             }
 
             let html = '';
-            historicoLeituras.forEach(item => {
+            historicoLeituras.forEach((item, index) => {
                 html += `
                     <div class="etiqueta-item">
+                        <div class="etiqueta-actions">
+                            <button class="etiqueta-action-btn danger" onclick="confirmarRemocao(${index})" title="Remover do histórico">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
                         <div class="etiqueta-header">
                             <span class="etiqueta-id"><i class="fas fa-hashtag"></i> ${item.id}</span>
                             <span class="etiqueta-data"><i class="far fa-clock"></i> ${item.data}</span>
@@ -1229,29 +1377,40 @@
         }
 
         // Limpar resultado atual
-        window.limparResultado = function() {
+        window.limparResultado = function () {
             document.getElementById('qrResultCard').style.display = 'none';
             ultimoQRCode = null;
         };
 
         // Consultar novamente
-        window.consultarNovamente = function() {
+        window.consultarNovamente = function () {
             if (ultimoQRCode) {
                 handleQRCode(ultimoQRCode);
             }
         };
 
         // Trocar entre tabs
-        window.switchTab = function(tab) {
+        window.switchTab = function (tab) {
+            // Remover classe active de todas as tabs
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+            // Ativar a tab correta
             document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
-            
+
+            // Esconder todas as tabs de conteúdo
             document.getElementById('scannerTab').classList.add('hidden');
             document.getElementById('historicoTab').classList.add('hidden');
             document.getElementById('configTab').classList.add('hidden');
-            
+
+            // Mostrar a tab selecionada
             document.getElementById(`${tab}Tab`).classList.remove('hidden');
-            
+
+            // Parar scanner se não estiver na tab scanner
+            if (tab !== 'scanner') {
+                stopScanner();
+            }
+
+            // Atualizar histórico se necessário
             if (tab === 'historico') {
                 atualizarHistorico();
             }
@@ -1262,15 +1421,15 @@
             const notification = document.getElementById('notification');
             const icon = document.getElementById('notificationIcon');
             const message = document.getElementById('notificationMessage');
-            
+
             message.textContent = mensagem;
-            
-            icon.className = tipo === 'success' ? 'fas fa-check-circle' : 
-                           tipo === 'error' ? 'fas fa-times-circle' :
-                           tipo === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
-            
+
+            icon.className = tipo === 'success' ? 'fas fa-check-circle' :
+                tipo === 'error' ? 'fas fa-times-circle' :
+                    tipo === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
+
             notification.classList.remove('hidden');
-            
+
             setTimeout(() => {
                 notification.classList.add('hidden');
             }, 3000);
@@ -1298,4 +1457,5 @@
         });
     </script>
 </body>
+
 </html>
