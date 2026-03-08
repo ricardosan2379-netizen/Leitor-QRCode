@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PCI Scanner - Leitor QR Code Baserow</title>
+    <!-- Fontes e ícones -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Biblioteca QR Code Scanner -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0B1A2A 0%, #1E3B5A 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Container principal do app mobile */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            max-height: 100vh;
+            background: #F5F8FF;
+            border-radius: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Header */
+        .app-header {
+            background: linear-gradient(145deg, #1E3B5A, #13293D);
+            color: white;
+            padding: 20px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-logo {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .header-text {
+            flex: 1;
+        }
+
+        .header-text h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .header-text p {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .connection-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            box-shadow: 0 0 10px #4CAF50;
+            margin-right: 8px;
+        }
+
+        /* Área de conteúdo rolável */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 20px rgba(0, 20, 40, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #13293D;
+        }
+
+        .card-title i {
+            color: #1E3B5A;
+            font-size: 1.3rem;
+        }
+
+        /* Scanner */
+        .scanner-container {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: #000;
+            border-radius: 28px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            position: relative;
+            border: 3px solid #1E3B5A;
+        }
+
+        #qr-reader {
+            width: 100%;
+            height: 100%;
+        }
+
+        .scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 28px;
+            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .scanner-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4CAF50, transparent);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% {
+                top: 0;
+            }
+
+            50% {
+                top: 100%;
+            }
+
+            100% {
+                top: 0;
+            }
+        }
+
+        .btn-scanner {
+            background: linear-gradient(145deg, #1E3B5A, #13293D);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-scanner:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .btn-scanner.secondary {
+            background: white;
+            color: #1E3B5A;
+            border: 1px solid #1E3B5A;
+        }
+
+        /* Informações do QR Code */
+        .qr-info {
+            background: #F0F5FF;
+            border-radius: 24px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .qr-info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .qr-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .qr-info-icon {
+            width: 40px;
+            height: 40px;
+            background: #1E3B5A;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .qr-info-content {
+            flex: 1;
+        }
+
+        .qr-info-label {
+            font-size: 0.8rem;
+            color: #6B7A8F;
+            margin-bottom: 2px;
+        }
+
+        .qr-info-value {
+            font-weight: 600;
+            color: #13293D;
+            font-size: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.success {
+            background: #DFF0E4;
+            color: #0E6832;
+        }
+
+        .badge.warning {
+            background: #FFF2DB;
+            color: #B45B0A;
+        }
+
+        .badge.danger {
+            background: #FFE5E5;
+            color: #C11F2F;
+        }
+
+        .badge.info {
+            background: #E0F2FE;
+            color: #0369A1;
+        }
+
+        /* Dados do extintor */
+        .extintor-card {
+            background: linear-gradient(145deg, #f8fafd, #eef2f6);
+            border-radius: 24px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        .extintor-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #CBD5E1;
+        }
+
+        .extintor-row:last-child {
+            border-bottom: none;
+        }
+
+        .extintor-label {
+            color: #4A5B6E;
+            font-size: 0.9rem;
+        }
+
+        .extintor-value {
+            font-weight: 600;
+            color: #13293D;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 40px;
+            padding: 4px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #6B7A8F;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background: #1E3B5A;
+            color: white;
+        }
+
+        .tab-content {
+            display: block;
+        }
+
+        .tab-content.hidden {
+            display: none;
+        }
+
+        /* Lista de etiquetas */
+        .etiqueta-item {
+            background: #F8FAFD;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid #1E3B5A;
+        }
+
+        .etiqueta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .etiqueta-id {
+            font-size: 0.8rem;
+            color: #6B7A8F;
+        }
+
+        .etiqueta-data {
+            font-size: 0.7rem;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 40px;
+        }
+
+        .etiqueta-detalhes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .etiqueta-detalhe-item {
+            background: white;
+            border-radius: 16px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .etiqueta-detalhe-label {
+            font-size: 0.7rem;
+            color: #6B7A8F;
+        }
+
+        .etiqueta-detalhe-value {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #13293D;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #E0E8F0;
+            border-top-color: #1E3B5A;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Footer */
+        .app-footer {
+            padding: 16px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #6B7A8F;
+            border-top: 1px solid #E0E8F0;
+            background: white;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 32px;
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #13293D;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #1E3B5A;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #F0F4F8;
+            color: #2C3E50;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Notificação */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 40px;
+            padding: 12px 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                top: -50px;
+                opacity: 0;
+            }
+
+            to {
+                top: 20px;
+                opacity: 1;
+            }
+        }
+
+        /* Configurações */
+        .config-input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 40px;
+            border: 1px solid #E0E8F0;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        .config-input:focus {
+            outline: none;
+            border-color: #1E3B5A;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="app-header">
+            <div class="header-logo">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <div class="header-text">
+                <h1>PCI Scanner</h1>
+                <p>Leitor de QR Code • Baserow</p>
+            </div>
+            <div class="connection-status" id="connectionStatus"></div>
+        </div>
+
+        <!-- Área de Conteúdo -->
+        <div class="content-area" id="contentArea">
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('scanner')" id="tabScanner">
+                    <i class="fas fa-camera"></i> Scanner
+                </div>
+                <div class="tab" onclick="switchTab('historico')" id="tabHistorico">
+                    <i class="fas fa-history"></i> Histórico
+                </div>
+                <div class="tab" onclick="switchTab('config')" id="tabConfig">
+                    <i class="fas fa-cog"></i> Config
+                </div>
+            </div>
+
+            <!-- Tab Scanner -->
+            <div id="scannerTab" class="tab-content">
+                <div class="scanner-container" id="scannerContainer">
+                    <div id="qr-reader"></div>
+                    <div class="scanner-overlay"></div>
+                    <div class="scanner-line"></div>
+                </div>
+
+                <button class="btn-scanner" onclick="startScanner()" id="startScannerBtn">
+                    <i class="fas fa-camera"></i> Iniciar Scanner
+                </button>
+                <button class="btn-scanner secondary" onclick="stopScanner()" id="stopScannerBtn"
+                    style="display: none;">
+                    <i class="fas fa-stop"></i> Parar Scanner
+                </button>
+
+                <!-- Informações do QR Lido -->
+                <div class="card" id="qrResultCard" style="display: none;">
+                    <div class="card-title">
+                        <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
+                        <span>QR Code Lido</span>
+                        <span class="badge success" style="margin-left: auto;">ID: <span id="qrIdDisplay"></span></span>
+                    </div>
+
+                    <div class="qr-info">
+                        <div class="qr-info-item">
+                            <div class="qr-info-icon">
+                                <i class="fas fa-fire-extinguisher"></i>
+                            </div>
+                            <div class="qr-info-content">
+                                <div class="qr-info-label">Extintor</div>
+                                <div class="qr-info-value" id="qrExtintorId">Carregando...</div>
+                            </div>
+                        </div>
+                        <div class="qr-info-item">
+                            <div class="qr-info-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="qr-info-content">
+                                <div class="qr-info-label">Cliente</div>
+                                <div class="qr-info-value" id="qrClienteNome">Carregando...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="extintor-card" id="extintorDetails" style="display: none;">
+                        <div class="extintor-row">
+                            <span class="extintor-label">Classe</span>
+                            <span class="extintor-value" id="extClasse">-</span>
+                        </div>
+                        <div class="extintor-row">
+                            <span class="extintor-label">Tipo</span>
+                            <span class="extintor-value" id="extTipo">-</span>
+                        </div>
+                        <div class="extintor-row">
+                            <span class="extintor-label">Carga</span>
+                            <span class="extintor-value" id="extKg">-</span>
+                        </div>
+                        <div class="extintor-row">
+                            <span class="extintor-label">Validade</span>
+                            <span class="extintor-value" id="extValidade">-</span>
+                        </div>
+                        <div class="extintor-row">
+                            <span class="extintor-label">Última Recarga</span>
+                            <span class="extintor-value" id="extRecarga">-</span>
+                        </div>
+                        <div class="extintor-row">
+                            <span class="extintor-label">Local</span>
+                            <span class="extintor-value" id="extLocal">-</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; margin-top: 16px;">
+                        <button class="btn-scanner" style="flex: 1; margin: 0;" onclick="consultarNovamente()">
+                            <i class="fas fa-sync-alt"></i> Consultar
+                        </button>
+                        <button class="btn-scanner secondary" style="flex: 1; margin: 0;" onclick="limparResultado()">
+                            <i class="fas fa-times"></i> Limpar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="loading" id="loadingIndicator" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Consultando dados no Baserow...</p>
+                </div>
+            </div>
+
+            <!-- Tab Histórico -->
+            <div id="historicoTab" class="tab-content hidden">
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-history"></i>
+                        <span>Últimas Leituras</span>
+                    </div>
+
+                    <div id="historicoLista">
+                        <!-- Itens serão inseridos via JS -->
+                        <div style="text-align: center; padding: 40px; color: #6B7A8F;">
+                            <i class="fas fa-qrcode" style="font-size: 3rem; margin-bottom: 16px; opacity: 0.3;"></i>
+                            <p>Nenhuma leitura realizada ainda</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Configurações -->
+            <div id="configTab" class="tab-content hidden">
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-database"></i>
+                        <span>Configuração Baserow</span>
+                    </div>
+
+                    <input type="text" class="config-input" id="baserowUrl" placeholder="URL da API"
+                        value="https://api.baserow.io/api/">
+                    <input type="password" class="config-input" id="baserowToken" placeholder="Token da Base">
+
+                    <div style="margin: 16px 0;">
+                        <label style="font-size: 0.9rem; color: #4A5B6E;">IDs das Tabelas</label>
+                    </div>
+
+                    <input type="text" class="config-input" id="tableEtiquetas" placeholder="ID Tabela Etiquetas">
+                    <input type="text" class="config-input" id="tableExtintores" placeholder="ID Tabela Extintores">
+                    <input type="text" class="config-input" id="tableClientes" placeholder="ID Tabela Clientes">
+
+                    <button class="btn-scanner" onclick="salvarConfig()" style="margin-top: 8px;">
+                        <i class="fas fa-save"></i> Salvar Configurações
+                    </button>
+                    <button class="btn-scanner secondary" onclick="testarConexao()" style="margin-top: 8px;">
+                        <i class="fas fa-plug"></i> Testar Conexão
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Sobre</span>
+                    </div>
+                    <p style="color: #4A5B6E; line-height: 1.6; margin-bottom: 8px;">
+                        <strong>PCI Scanner v1.0</strong><br>
+                        Leitor de QR Code integrado ao Baserow.<br>
+                        Aponte a câmera para um QR Code de etiqueta para visualizar os dados do extintor.
+                    </p>
+                    <p style="color: #6B7A8F; font-size: 0.85rem;">
+                        <i class="fas fa-copyright"></i> 2026 ciberic.lab
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="app-footer">
+            <i class="fas fa-qrcode"></i> Aponte a câmera para o QR Code
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div class="modal-overlay hidden" id="modalConfirm">
+        <div class="modal-content">
+            <div class="modal-title">
+                <i class="fas fa-check-circle"></i> QR Code Lido
+            </div>
+            <p id="modalMessage">Dados carregados com sucesso!</p>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="fecharModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificação -->
+    <div class="notification hidden" id="notification">
+        <i class="fas fa-info-circle" id="notificationIcon"></i>
+        <span id="notificationMessage">Notificação</span>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let html5QrcodeScanner = null;
+        let isScanning = false;
+        let historicoLeituras = JSON.parse(localStorage.getItem('historicoLeituras')) || [];
+        let ultimoQRCode = null;
+
+        // Configuração Baserow
+        let baserowConfig = {
+            url: 'https://api.baserow.io/api/',
+            token: '',
+            tables: {
+                etiquetas: '',
+                extintores: '',
+                clientes: ''
+            }
+        };
+
+        // Carregar configurações salvas
+        function carregarConfig() {
+            const saved = localStorage.getItem('baserowConfig');
+            if (saved) {
+                try {
+                    baserowConfig = JSON.parse(saved);
+                    document.getElementById('baserowUrl').value = baserowConfig.url;
+                    document.getElementById('baserowToken').value = baserowConfig.token;
+                    document.getElementById('tableEtiquetas').value = baserowConfig.tables.etiquetas;
+                    document.getElementById('tableExtintores').value = baserowConfig.tables.extintores;
+                    document.getElementById('tableClientes').value = baserowConfig.tables.clientes;
+                } catch (e) {
+                    console.error('Erro ao carregar config:', e);
+                }
+            }
+
+            // Verificar status da conexão
+            verificarConexao();
+        }
+
+        // Salvar configurações
+        window.salvarConfig = function () {
+            baserowConfig = {
+                url: document.getElementById('baserowUrl').value,
+                token: document.getElementById('baserowToken').value,
+                tables: {
+                    etiquetas: document.getElementById('tableEtiquetas').value,
+                    extintores: document.getElementById('tableExtintores').value,
+                    clientes: document.getElementById('tableClientes').value
+                }
+            };
+
+            localStorage.setItem('baserowConfig', JSON.stringify(baserowConfig));
+            mostrarNotificacao('✅ Configurações salvas!', 'success');
+            verificarConexao();
+        };
+
+        // Testar conexão com Baserow
+        window.testarConexao = async function () {
+            if (!baserowConfig.token) {
+                mostrarNotificacao('❌ Token não configurado', 'error');
+                return;
+            }
+
+            if (!baserowConfig.tables.etiquetas) {
+                mostrarNotificacao('❌ ID da tabela de etiquetas não configurado', 'error');
+                return;
+            }
+
+            mostrarNotificacao('🔄 Testando conexão...', 'info');
+
+            try {
+                const response = await fetch(`${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&size=1`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Token ${baserowConfig.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    mostrarNotificacao('✅ Conexão com Baserow estabelecida!', 'success');
+                    document.getElementById('connectionStatus').style.background = '#4CAF50';
+                } else {
+                    const error = await response.json();
+                    mostrarNotificacao(`❌ Erro: ${error.error || 'Falha na conexão'}`, 'error');
+                    document.getElementById('connectionStatus').style.background = '#F44336';
+                }
+            } catch (error) {
+                mostrarNotificacao(`❌ Erro de rede: ${error.message}`, 'error');
+                document.getElementById('connectionStatus').style.background = '#F44336';
+            }
+        };
+
+        // Verificar conexão
+        async function verificarConexao() {
+            if (!baserowConfig.token || !baserowConfig.tables.etiquetas) {
+                document.getElementById('connectionStatus').style.background = '#F44336';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&size=1`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Token ${baserowConfig.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    document.getElementById('connectionStatus').style.background = '#4CAF50';
+                } else {
+                    document.getElementById('connectionStatus').style.background = '#F44336';
+                }
+            } catch {
+                document.getElementById('connectionStatus').style.background = '#F44336';
+            }
+        }
+
+        // Iniciar scanner
+        window.startScanner = function () {
+            if (!baserowConfig.token) {
+                mostrarNotificacao('❌ Configure o token do Baserow primeiro', 'error');
+                switchTab('config');
+                return;
+            }
+
+            const scannerContainer = document.getElementById('qr-reader');
+            scannerContainer.innerHTML = '';
+
+            html5QrcodeScanner = new Html5Qrcode("qr-reader");
+
+            const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                console.log('QR Code lido:', decodedText);
+                handleQRCode(decodedText);
+                stopScanner();
+            };
+
+            const config = {
+                fps: 10,
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0,
+                rememberLastUsedCamera: true,
+                showTorchButtonIfSupported: true
+            };
+
+            html5QrcodeScanner.start(
+                { facingMode: "environment" },
+                config,
+                qrCodeSuccessCallback,
+                (errorMessage) => {
+                    // Erros silenciosos
+                }
+            ).then(() => {
+                isScanning = true;
+                document.getElementById('startScannerBtn').style.display = 'none';
+                document.getElementById('stopScannerBtn').style.display = 'block';
+                mostrarNotificacao('📷 Scanner iniciado! Aponte para o QR Code.', 'info');
+            }).catch((err) => {
+                console.error('Erro ao iniciar scanner:', err);
+                mostrarNotificacao('❌ Erro ao acessar a câmera', 'error');
+            });
+        };
+
+        // Parar scanner
+        window.stopScanner = function () {
+            if (html5QrcodeScanner && isScanning) {
+                html5QrcodeScanner.stop().then(() => {
+                    isScanning = false;
+                    document.getElementById('startScannerBtn').style.display = 'block';
+                    document.getElementById('stopScannerBtn').style.display = 'none';
+                    mostrarNotificacao('⏹️ Scanner parado', 'info');
+                }).catch((err) => {
+                    console.error('Erro ao parar scanner:', err);
+                });
+            }
+        };
+
+        // Processar QR Code lido
+        async function handleQRCode(qrData) {
+            // Extrair ID do QR Code (formato esperado: PCI:ID123 ou apenas ID)
+            let qrId = qrData.replace('PCI:', '').trim();
+
+            if (!qrId) {
+                mostrarNotificacao('❌ QR Code inválido', 'error');
+                return;
+            }
+
+            ultimoQRCode = qrId;
+            document.getElementById('qrIdDisplay').textContent = qrId;
+            document.getElementById('qrResultCard').style.display = 'block';
+            document.getElementById('loadingIndicator').style.display = 'flex';
+            document.getElementById('extintorDetails').style.display = 'none';
+
+            // Mostrar loading
+            document.getElementById('qrExtintorId').textContent = 'Consultando...';
+            document.getElementById('qrClienteNome').textContent = 'Aguarde...';
+
+            try {
+                // Buscar dados da etiqueta no Baserow
+                const etiquetaData = await buscarEtiqueta(qrId);
+
+                if (etiquetaData) {
+                    document.getElementById('qrExtintorId').textContent = etiquetaData.extintorId || 'N/I';
+                    document.getElementById('qrClienteNome').textContent = etiquetaData.clienteNome || 'N/I';
+
+                    // Buscar dados completos do extintor
+                    if (etiquetaData.extintorId) {
+                        const extintorData = await buscarExtintor(etiquetaData.extintorId);
+                        if (extintorData) {
+                            document.getElementById('extClasse').textContent = extintorData.classe || '-';
+                            document.getElementById('extTipo').textContent = extintorData.tipo || '-';
+                            document.getElementById('extKg').textContent = extintorData.kg || '-';
+                            document.getElementById('extValidade').textContent = formatarData(extintorData.validade) || '-';
+                            document.getElementById('extRecarga').textContent = formatarData(extintorData.recarga) || '-';
+                            document.getElementById('extLocal').textContent = etiquetaData.localInstalacao || '-';
+
+                            document.getElementById('extintorDetails').style.display = 'block';
+                        }
+                    }
+
+                    // Adicionar ao histórico
+                    adicionarAoHistorico({
+                        id: qrId,
+                        data: new Date().toLocaleString(),
+                        extintor: etiquetaData.extintorId || 'N/I',
+                        cliente: etiquetaData.clienteNome || 'N/I',
+                        local: etiquetaData.localInstalacao || '-'
+                    });
+
+                    mostrarNotificacao('✅ Dados carregados com sucesso!', 'success');
+                } else {
+                    document.getElementById('qrExtintorId').textContent = 'Não encontrado';
+                    document.getElementById('qrClienteNome').textContent = 'Não encontrado';
+                    mostrarNotificacao('⚠️ QR Code não encontrado no Baserow', 'warning');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+                document.getElementById('qrExtintorId').textContent = 'Erro';
+                document.getElementById('qrClienteNome').textContent = 'Erro na consulta';
+                mostrarNotificacao(`❌ Erro: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('loadingIndicator').style.display = 'none';
+            }
+        }
+
+        // Buscar etiqueta no Baserow
+        async function buscarEtiqueta(qrId) {
+            if (!baserowConfig.token || !baserowConfig.tables.etiquetas) {
+                throw new Error('Configuração do Baserow incompleta');
+            }
+
+            const response = await fetch(
+                `${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&filters__ID_Etiqueta__contains=${encodeURIComponent(qrId)}`,
+                {
+                    headers: {
+                        'Authorization': `Token ${baserowConfig.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Erro ao consultar Baserow');
+            }
+
+            const data = await response.json();
+
+            if (data.results && data.results.length > 0) {
+                const etiqueta = data.results[0];
+
+                // Buscar nome do cliente se houver ID
+                let clienteNome = 'N/I';
+                if (etiqueta.Cliente && baserowConfig.tables.clientes) {
+                    try {
+                        const clienteResponse = await fetch(
+                            `${baserowConfig.url}database/rows/table/${baserowConfig.tables.clientes}/${etiqueta.Cliente}/?user_field_names=true`,
+                            {
+                                headers: {
+                                    'Authorization': `Token ${baserowConfig.token}`,
+                                    'Content-Type': 'application/json'
+                                }
+                            }
+                        );
+                        if (clienteResponse.ok) {
+                            const clienteData = await clienteResponse.json();
+                            clienteNome = clienteData.Nome || clienteData.nome || 'N/I';
+                        }
+                    } catch (e) {
+                        console.warn('Erro ao buscar cliente:', e);
+                    }
+                }
+
+                return {
+                    extintorId: etiqueta.Extintor || etiqueta.extintorId || 'N/I',
+                    clienteNome: clienteNome,
+                    localInstalacao: etiqueta['Local Instalação'] || etiqueta.localInstalacao || '-',
+                    dataHora: etiqueta['Data Hora'] || etiqueta.dataHora || '-'
+                };
+            }
+
+            return null;
+        }
+
+        // Buscar extintor no Baserow
+        async function buscarExtintor(extintorId) {
+            if (!baserowConfig.token || !baserowConfig.tables.extintores) {
+                return null;
+            }
+
+            const response = await fetch(
+                `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&filters__Nº_Extintor__contains=${encodeURIComponent(extintorId)}`,
+                {
+                    headers: {
+                        'Authorization': `Token ${baserowConfig.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                return null;
+            }
+
+            const data = await response.json();
+
+            if (data.results && data.results.length > 0) {
+                const ext = data.results[0];
+                return {
+                    classe: ext.Classe || ext.classe || '-',
+                    tipo: ext.Tipo || ext.tipo || '-',
+                    kg: ext.Kg || ext.kg || '-',
+                    validade: ext['Data da Validade'] || ext.validade || '-',
+                    recarga: ext['Data da Recarga'] || ext.recarga || '-'
+                };
+            }
+
+            return null;
+        }
+
+        // Adicionar ao histórico
+        function adicionarAoHistorico(item) {
+            historicoLeituras.unshift(item);
+
+            // Manter apenas os últimos 20
+            if (historicoLeituras.length > 20) {
+                historicoLeituras = historicoLeituras.slice(0, 20);
+            }
+
+            localStorage.setItem('historicoLeituras', JSON.stringify(historicoLeituras));
+            atualizarHistorico();
+        }
+
+        // Atualizar lista de histórico
+        function atualizarHistorico() {
+            const lista = document.getElementById('historicoLista');
+
+            if (historicoLeituras.length === 0) {
+                lista.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #6B7A8F;">
+                        <i class="fas fa-qrcode" style="font-size: 3rem; margin-bottom: 16px; opacity: 0.3;"></i>
+                        <p>Nenhuma leitura realizada ainda</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            historicoLeituras.forEach(item => {
+                html += `
+                    <div class="etiqueta-item">
+                        <div class="etiqueta-header">
+                            <span class="etiqueta-id"><i class="fas fa-hashtag"></i> ${item.id}</span>
+                            <span class="etiqueta-data"><i class="far fa-clock"></i> ${item.data}</span>
+                        </div>
+                        <div class="etiqueta-detalhes">
+                            <div class="etiqueta-detalhe-item">
+                                <div class="etiqueta-detalhe-label">Extintor</div>
+                                <div class="etiqueta-detalhe-value">${item.extintor}</div>
+                            </div>
+                            <div class="etiqueta-detalhe-item">
+                                <div class="etiqueta-detalhe-label">Cliente</div>
+                                <div class="etiqueta-detalhe-value">${item.cliente}</div>
+                            </div>
+                            <div class="etiqueta-detalhe-item" style="grid-column: span 2;">
+                                <div class="etiqueta-detalhe-label">Local</div>
+                                <div class="etiqueta-detalhe-value">${item.local}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            lista.innerHTML = html;
+        }
+
+        // Limpar resultado atual
+        window.limparResultado = function () {
+            document.getElementById('qrResultCard').style.display = 'none';
+            ultimoQRCode = null;
+        };
+
+        // Consultar novamente o mesmo QR Code
+        window.consultarNovamente = function () {
+            if (ultimoQRCode) {
+                handleQRCode(ultimoQRCode);
+            }
+        };
+
+        // Trocar entre tabs
+        window.switchTab = function (tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
+
+            document.getElementById('scannerTab').classList.add('hidden');
+            document.getElementById('historicoTab').classList.add('hidden');
+            document.getElementById('configTab').classList.add('hidden');
+
+            document.getElementById(tab + 'Tab').classList.remove('hidden');
+
+            if (tab === 'historico') {
+                atualizarHistorico();
+            }
+        };
+
+        // Mostrar notificação
+        function mostrarNotificacao(mensagem, tipo = 'info') {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notificationIcon');
+            const message = document.getElementById('notificationMessage');
+
+            message.textContent = mensagem;
+
+            switch (tipo) {
+                case 'success':
+                    icon.className = 'fas fa-check-circle';
+                    icon.style.color = '#4CAF50';
+                    break;
+                case 'error':
+                    icon.className = 'fas fa-times-circle';
+                    icon.style.color = '#F44336';
+                    break;
+                case 'warning':
+                    icon.className = 'fas fa-exclamation-triangle';
+                    icon.style.color = '#FF9800';
+                    break;
+                default:
+                    icon.className = 'fas fa-info-circle';
+                    icon.style.color = '#2196F3';
+            }
+
+            notification.classList.remove('hidden');
+
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Formatar data
+        function formatarData(dataISO) {
+            if (!dataISO) return '-';
+            try {
+                const [ano, mes, dia] = dataISO.split('-');
+                return `${dia}/${mes}/${ano}`;
+            } catch {
+                return dataISO;
+            }
+        }
+
+        // Fechar modal
+        window.fecharModal = function () {
+            document.getElementById('modalConfirm').classList.add('hidden');
+        };
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarConfig();
+            atualizarHistorico();
+
+            // Verificar permissão da câmera
+            if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+                navigator.mediaDevices.enumerateDevices()
+                    .then(devices => {
+                        const cameras = devices.filter(d => d.kind === 'videoinput');
+                        if (cameras.length === 0) {
+                            mostrarNotificacao('⚠️ Nenhuma câmera encontrada', 'warning');
+                        }
+                    })
+                    .catch(() => { });
+            }
+        });
+
+        // Prevenir scroll quando modal estiver aberto
+        window.addEventListener('load', () => {
+            // Verificar se é dispositivo mobile
+            if (window.innerWidth <= 480) {
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    </script>
+</body>
+
+</html>
