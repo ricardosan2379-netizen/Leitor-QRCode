@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PCI Scanner - Leitor QR Code Baserow</title>
     <!-- Fontes e ícones -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -41,29 +39,29 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
         }
 
         /* Header */
         .app-header {
             background: linear-gradient(145deg, #1E3B5A, #13293D);
             color: white;
-            padding: 20px 16px;
+            padding: 16px;
             display: flex;
             align-items: center;
-            gap: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .header-logo {
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
         }
 
         .header-text {
@@ -71,23 +69,22 @@
         }
 
         .header-text h1 {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .header-text p {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             opacity: 0.8;
         }
 
         .connection-status {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: #4CAF50;
             box-shadow: 0 0 10px #4CAF50;
-            margin-right: 8px;
         }
 
         /* Área de conteúdo rolável */
@@ -101,11 +98,11 @@
         /* Cards */
         .card {
             background: white;
-            border-radius: 28px;
+            border-radius: 24px;
             padding: 20px;
             margin-bottom: 16px;
-            box-shadow: 0 8px 20px rgba(0, 20, 40, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 20, 40, 0.04);
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
         .card-title {
@@ -113,22 +110,22 @@
             align-items: center;
             gap: 10px;
             margin-bottom: 16px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #13293D;
         }
 
         .card-title i {
             color: #1E3B5A;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
         }
 
         /* Scanner */
         .scanner-container {
             width: 100%;
             aspect-ratio: 1/1;
-            background: #000;
-            border-radius: 28px;
+            background: #1a1a1a;
+            border-radius: 24px;
             overflow: hidden;
             margin-bottom: 16px;
             position: relative;
@@ -140,6 +137,21 @@
             height: 100%;
         }
 
+        /* Garantir que o video da câmera apareça */
+        #qr-reader video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+        }
+
+        #qr-reader__scan_region {
+            min-height: unset !important;
+        }
+
+        #qr-reader__dashboard_section_csr button {
+            display: none !important;
+        }
+
         .scanner-overlay {
             position: absolute;
             top: 0;
@@ -147,9 +159,9 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 28px;
-            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 24px;
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
         }
 
         .scanner-line {
@@ -161,33 +173,25 @@
         }
 
         @keyframes scan {
-            0% {
-                top: 0;
-            }
-
-            50% {
-                top: 100%;
-            }
-
-            100% {
-                top: 0;
-            }
+            0% { top: 0; }
+            50% { top: 100%; }
+            100% { top: 0; }
         }
 
         .btn-scanner {
             background: linear-gradient(145deg, #1E3B5A, #13293D);
             color: white;
             border: none;
-            padding: 16px;
+            padding: 14px;
             border-radius: 40px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             cursor: pointer;
             transition: 0.3s;
         }
@@ -203,12 +207,36 @@
             border: 1px solid #1E3B5A;
         }
 
+        /* Botão de configuração discreto */
+        .config-button {
+            background: rgba(30, 59, 90, 0.1);
+            color: #1E3B5A;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            backdrop-filter: blur(5px);
+        }
+
+        .config-button i {
+            font-size: 0.9rem;
+        }
+
+        .config-button:active {
+            background: rgba(30, 59, 90, 0.2);
+        }
+
         /* Informações do QR Code */
         .qr-info {
             background: #F0F5FF;
-            border-radius: 24px;
-            padding: 16px;
-            margin: 16px 0;
+            border-radius: 20px;
+            padding: 14px;
+            margin: 12px 0;
         }
 
         .qr-info-item {
@@ -216,7 +244,7 @@
             align-items: center;
             gap: 12px;
             padding: 8px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
         .qr-info-item:last-child {
@@ -224,15 +252,15 @@
         }
 
         .qr-info-icon {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: #1E3B5A;
-            border-radius: 40px;
+            border-radius: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1rem;
         }
 
         .qr-info-content {
@@ -240,7 +268,7 @@
         }
 
         .qr-info-label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #6B7A8F;
             margin-bottom: 2px;
         }
@@ -248,14 +276,14 @@
         .qr-info-value {
             font-weight: 600;
             color: #13293D;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .badge {
             display: inline-block;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.7rem;
             font-weight: 600;
         }
 
@@ -266,7 +294,7 @@
 
         .badge.warning {
             background: #FFF2DB;
-            color: #B45B0A;
+            color: #B45A0B;
         }
 
         .badge.danger {
@@ -274,24 +302,20 @@
             color: #C11F2F;
         }
 
-        .badge.info {
-            background: #E0F2FE;
-            color: #0369A1;
-        }
-
         /* Dados do extintor */
         .extintor-card {
             background: linear-gradient(145deg, #f8fafd, #eef2f6);
-            border-radius: 24px;
-            padding: 16px;
+            border-radius: 20px;
+            padding: 14px;
             margin: 12px 0;
         }
 
         .extintor-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px dashed #CBD5E1;
+            font-size: 0.9rem;
         }
 
         .extintor-row:last-child {
@@ -300,7 +324,6 @@
 
         .extintor-label {
             color: #4A5B6E;
-            font-size: 0.9rem;
         }
 
         .extintor-value {
@@ -315,16 +338,16 @@
             border-radius: 40px;
             padding: 4px;
             margin-bottom: 16px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
 
         .tab {
             flex: 1;
             text-align: center;
-            padding: 12px;
+            padding: 10px;
             border-radius: 40px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #6B7A8F;
             transition: 0.3s;
             cursor: pointer;
@@ -346,9 +369,9 @@
         /* Lista de etiquetas */
         .etiqueta-item {
             background: #F8FAFD;
-            border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 12px;
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 10px;
             border-left: 4px solid #1E3B5A;
         }
 
@@ -360,38 +383,38 @@
         }
 
         .etiqueta-id {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #6B7A8F;
         }
 
         .etiqueta-data {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             background: white;
             padding: 4px 8px;
-            border-radius: 40px;
+            border-radius: 30px;
         }
 
         .etiqueta-detalhes {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            gap: 6px;
         }
 
         .etiqueta-detalhe-item {
             background: white;
-            border-radius: 16px;
-            padding: 8px;
+            border-radius: 14px;
+            padding: 6px;
             text-align: center;
         }
 
         .etiqueta-detalhe-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #6B7A8F;
         }
 
         .etiqueta-detalhe-value {
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #13293D;
         }
 
@@ -401,43 +424,41 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 40px;
+            padding: 30px;
         }
 
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #E0E8F0;
+            width: 36px;
+            height: 36px;
+            border: 3px solid #E0E8F0;
             border-top-color: #1E3B5A;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
 
         /* Footer */
         .app-footer {
-            padding: 16px;
+            padding: 12px;
             text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #6B7A8F;
             border-top: 1px solid #E0E8F0;
             background: white;
         }
 
-        /* Modal */
+        /* Modal de permissão */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0,0,0,0.5);
             backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
@@ -448,19 +469,17 @@
 
         .modal-content {
             background: white;
-            border-radius: 32px;
+            border-radius: 28px;
             padding: 24px;
-            max-width: 400px;
+            max-width: 360px;
             width: 100%;
-            max-height: 80vh;
-            overflow-y: auto;
         }
 
         .modal-title {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: #13293D;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -474,10 +493,11 @@
 
         .modal-buttons button {
             flex: 1;
-            padding: 14px;
+            padding: 12px;
             border-radius: 40px;
             border: none;
             font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .btn-primary {
@@ -497,49 +517,91 @@
         /* Notificação */
         .notification {
             position: fixed;
-            top: 20px;
+            top: 16px;
             left: 50%;
             transform: translateX(-50%);
             background: white;
-            border-radius: 40px;
-            padding: 12px 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 30px;
+            padding: 10px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             z-index: 2000;
             display: flex;
             align-items: center;
             gap: 8px;
             animation: slideDown 0.3s ease;
+            font-size: 0.9rem;
         }
 
         @keyframes slideDown {
-            from {
-                top: -50px;
-                opacity: 0;
-            }
-
-            to {
-                top: 20px;
-                opacity: 1;
-            }
+            from { top: -50px; opacity: 0; }
+            to { top: 16px; opacity: 1; }
         }
 
-        /* Configurações */
+        /* Configurações (mais discretas) */
+        .config-section {
+            background: #F8FAFD;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #E0E8F0;
+        }
+
+        .config-section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1E3B5A;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         .config-input {
             width: 100%;
-            padding: 14px 16px;
-            border-radius: 40px;
+            padding: 12px 14px;
+            border-radius: 30px;
             border: 1px solid #E0E8F0;
-            margin-bottom: 12px;
-            font-size: 0.95rem;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            background: white;
         }
 
         .config-input:focus {
             outline: none;
             border-color: #1E3B5A;
         }
+
+        .config-label {
+            font-size: 0.8rem;
+            color: #6B7A8F;
+            margin-left: 8px;
+            margin-bottom: 4px;
+        }
+
+        .config-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .config-actions button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 30px;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: #EFF3F8;
+            color: #1E3B5A;
+            cursor: pointer;
+        }
+
+        .config-actions button.primary {
+            background: #1E3B5A;
+            color: white;
+        }
     </style>
 </head>
-
 <body>
     <div class="app-container">
         <!-- Header -->
@@ -549,9 +611,16 @@
             </div>
             <div class="header-text">
                 <h1>PCI Scanner</h1>
-                <p>Leitor de QR Code • Baserow</p>
+                <p>Leitor QR Code • Baserow</p>
             </div>
             <div class="connection-status" id="connectionStatus"></div>
+        </div>
+
+        <!-- Botão de Configuração Discreto (fora das tabs) -->
+        <div style="padding: 8px 16px 0 16px; display: flex; justify-content: flex-end;">
+            <button class="config-button" onclick="switchTab('config')">
+                <i class="fas fa-cog"></i> Configurar API
+            </button>
         </div>
 
         <!-- Área de Conteúdo -->
@@ -564,13 +633,24 @@
                 <div class="tab" onclick="switchTab('historico')" id="tabHistorico">
                     <i class="fas fa-history"></i> Histórico
                 </div>
-                <div class="tab" onclick="switchTab('config')" id="tabConfig">
-                    <i class="fas fa-cog"></i> Config
-                </div>
             </div>
 
             <!-- Tab Scanner -->
             <div id="scannerTab" class="tab-content">
+                <!-- Card de Permissão da Câmera (aparece se necessário) -->
+                <div class="card" id="permissaoCameraCard" style="display: none;">
+                    <div class="card-title">
+                        <i class="fas fa-camera"></i>
+                        <span>Permissão da Câmera</span>
+                    </div>
+                    <p style="color: #4A5B6E; margin-bottom: 16px;">
+                        Para ler QR Codes, precisamos acessar sua câmera traseira.
+                    </p>
+                    <button class="btn-scanner" onclick="solicitarPermissaoCamera()">
+                        <i class="fas fa-camera"></i> Permitir Acesso à Câmera
+                    </button>
+                </div>
+
                 <div class="scanner-container" id="scannerContainer">
                     <div id="qr-reader"></div>
                     <div class="scanner-overlay"></div>
@@ -578,10 +658,9 @@
                 </div>
 
                 <button class="btn-scanner" onclick="startScanner()" id="startScannerBtn">
-                    <i class="fas fa-camera"></i> Iniciar Scanner
+                    <i class="fas fa-play"></i> Iniciar Scanner
                 </button>
-                <button class="btn-scanner secondary" onclick="stopScanner()" id="stopScannerBtn"
-                    style="display: none;">
+                <button class="btn-scanner secondary" onclick="stopScanner()" id="stopScannerBtn" style="display: none;">
                     <i class="fas fa-stop"></i> Parar Scanner
                 </button>
 
@@ -641,7 +720,7 @@
                         </div>
                     </div>
 
-                    <div style="display: flex; gap: 8px; margin-top: 16px;">
+                    <div style="display: flex; gap: 8px; margin-top: 12px;">
                         <button class="btn-scanner" style="flex: 1; margin: 0;" onclick="consultarNovamente()">
                             <i class="fas fa-sync-alt"></i> Consultar
                         </button>
@@ -667,53 +746,56 @@
 
                     <div id="historicoLista">
                         <!-- Itens serão inseridos via JS -->
-                        <div style="text-align: center; padding: 40px; color: #6B7A8F;">
-                            <i class="fas fa-qrcode" style="font-size: 3rem; margin-bottom: 16px; opacity: 0.3;"></i>
+                        <div style="text-align: center; padding: 30px; color: #6B7A8F;">
+                            <i class="fas fa-qrcode" style="font-size: 2.5rem; margin-bottom: 12px; opacity: 0.3;"></i>
                             <p>Nenhuma leitura realizada ainda</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tab Configurações -->
+            <!-- Tab Configurações (agora mais discreta) -->
             <div id="configTab" class="tab-content hidden">
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-database"></i>
-                        <span>Configuração Baserow</span>
+                <div class="config-section">
+                    <div class="config-section-title">
+                        <i class="fas fa-database"></i> Conexão Baserow
                     </div>
+                    
+                    <div class="config-label">URL da API</div>
+                    <input type="text" class="config-input" id="baserowUrl" placeholder="https://api.baserow.io/api/" value="https://api.baserow.io/api/">
+                    
+                    <div class="config-label">Token da Base</div>
+                    <input type="password" class="config-input" id="baserowToken" placeholder="Token de autenticação">
+                    
+                    <div class="config-label" style="margin-top: 8px;">ID Tabela Etiquetas</div>
+                    <input type="text" class="config-input" id="tableEtiquetas" placeholder="ID da tabela de etiquetas">
+                    
+                    <div class="config-label">ID Tabela Extintores</div>
+                    <input type="text" class="config-input" id="tableExtintores" placeholder="ID da tabela de extintores">
+                    
+                    <div class="config-label">ID Tabela Clientes</div>
+                    <input type="text" class="config-input" id="tableClientes" placeholder="ID da tabela de clientes">
 
-                    <input type="text" class="config-input" id="baserowUrl" placeholder="URL da API"
-                        value="https://api.baserow.io/api/">
-                    <input type="password" class="config-input" id="baserowToken" placeholder="Token da Base">
-
-                    <div style="margin: 16px 0;">
-                        <label style="font-size: 0.9rem; color: #4A5B6E;">IDs das Tabelas</label>
+                    <div class="config-actions">
+                        <button onclick="salvarConfig()" class="primary">
+                            <i class="fas fa-save"></i> Salvar
+                        </button>
+                        <button onclick="testarConexao()">
+                            <i class="fas fa-plug"></i> Testar
+                        </button>
                     </div>
-
-                    <input type="text" class="config-input" id="tableEtiquetas" placeholder="ID Tabela Etiquetas">
-                    <input type="text" class="config-input" id="tableExtintores" placeholder="ID Tabela Extintores">
-                    <input type="text" class="config-input" id="tableClientes" placeholder="ID Tabela Clientes">
-
-                    <button class="btn-scanner" onclick="salvarConfig()" style="margin-top: 8px;">
-                        <i class="fas fa-save"></i> Salvar Configurações
-                    </button>
-                    <button class="btn-scanner secondary" onclick="testarConexao()" style="margin-top: 8px;">
-                        <i class="fas fa-plug"></i> Testar Conexão
-                    </button>
                 </div>
 
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Sobre</span>
+                <div class="config-section">
+                    <div class="config-section-title">
+                        <i class="fas fa-info-circle"></i> Sobre
                     </div>
-                    <p style="color: #4A5B6E; line-height: 1.6; margin-bottom: 8px;">
-                        <strong>PCI Scanner v1.0</strong><br>
+                    <p style="color: #4A5B6E; font-size: 0.85rem; line-height: 1.5;">
+                        <strong>PCI Scanner v1.1</strong><br>
                         Leitor de QR Code integrado ao Baserow.<br>
-                        Aponte a câmera para um QR Code de etiqueta para visualizar os dados do extintor.
+                        Aponte a câmera para um QR Code de etiqueta para visualizar os dados.
                     </p>
-                    <p style="color: #6B7A8F; font-size: 0.85rem;">
+                    <p style="color: #6B7A8F; font-size: 0.75rem; margin-top: 8px;">
                         <i class="fas fa-copyright"></i> 2026 ciberic.lab
                     </p>
                 </div>
@@ -722,19 +804,27 @@
 
         <!-- Footer -->
         <div class="app-footer">
-            <i class="fas fa-qrcode"></i> Aponte a câmera para o QR Code
+            <i class="fas fa-camera"></i> Aponte a câmera para o QR Code
         </div>
     </div>
 
-    <!-- Modal de Confirmação -->
-    <div class="modal-overlay hidden" id="modalConfirm">
+    <!-- Modal de Permissão da Câmera -->
+    <div class="modal-overlay hidden" id="modalPermissaoCamera">
         <div class="modal-content">
             <div class="modal-title">
-                <i class="fas fa-check-circle"></i> QR Code Lido
+                <i class="fas fa-camera"></i> Acesso à Câmera
             </div>
-            <p id="modalMessage">Dados carregados com sucesso!</p>
+            <p style="color: #4A5B6E; margin-bottom: 16px;">
+                Para ler QR Codes, precisamos acessar sua câmera traseira. 
+                Por favor, permita o acesso quando solicitado pelo navegador.
+            </p>
             <div class="modal-buttons">
-                <button class="btn-primary" onclick="fecharModal()">OK</button>
+                <button class="btn-primary" onclick="solicitarPermissaoCameraAgora()">
+                    <i class="fas fa-camera"></i> Permitir
+                </button>
+                <button class="btn-secondary" onclick="fecharModalPermissao()">
+                    Agora não
+                </button>
             </div>
         </div>
     </div>
@@ -784,7 +874,7 @@
         }
 
         // Salvar configurações
-        window.salvarConfig = function () {
+        window.salvarConfig = function() {
             baserowConfig = {
                 url: document.getElementById('baserowUrl').value,
                 token: document.getElementById('baserowToken').value,
@@ -801,21 +891,16 @@
         };
 
         // Testar conexão com Baserow
-        window.testarConexao = async function () {
+        window.testarConexao = async function() {
             if (!baserowConfig.token) {
                 mostrarNotificacao('❌ Token não configurado', 'error');
-                return;
-            }
-
-            if (!baserowConfig.tables.etiquetas) {
-                mostrarNotificacao('❌ ID da tabela de etiquetas não configurado', 'error');
                 return;
             }
 
             mostrarNotificacao('🔄 Testando conexão...', 'info');
 
             try {
-                const response = await fetch(`${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&size=1`, {
+                const response = await fetch(`${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas || '1'}/?user_field_names=true&size=1`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Token ${baserowConfig.token}`,
@@ -827,7 +912,7 @@
                     mostrarNotificacao('✅ Conexão com Baserow estabelecida!', 'success');
                     document.getElementById('connectionStatus').style.background = '#4CAF50';
                 } else {
-                    const error = await response.json();
+                    const error = await response.json().catch(() => ({}));
                     mostrarNotificacao(`❌ Erro: ${error.error || 'Falha na conexão'}`, 'error');
                     document.getElementById('connectionStatus').style.background = '#F44336';
                 }
@@ -839,13 +924,13 @@
 
         // Verificar conexão
         async function verificarConexao() {
-            if (!baserowConfig.token || !baserowConfig.tables.etiquetas) {
+            if (!baserowConfig.token) {
                 document.getElementById('connectionStatus').style.background = '#F44336';
                 return;
             }
 
             try {
-                const response = await fetch(`${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&size=1`, {
+                const response = await fetch(`${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas || '1'}/?user_field_names=true&size=1`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Token ${baserowConfig.token}`,
@@ -863,11 +948,68 @@
             }
         }
 
+        // Verificar permissão da câmera
+        async function verificarPermissaoCamera() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const cameras = devices.filter(d => d.kind === 'videoinput');
+                
+                if (cameras.length === 0) {
+                    mostrarNotificacao('⚠️ Nenhuma câmera encontrada no dispositivo', 'warning');
+                    document.getElementById('permissaoCameraCard').style.display = 'block';
+                    return false;
+                }
+
+                // Tentar acessar a câmera para verificar permissão
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                stream.getTracks().forEach(track => track.stop());
+                document.getElementById('permissaoCameraCard').style.display = 'none';
+                return true;
+            } catch (error) {
+                console.log('Permissão de câmera negada ou erro:', error);
+                document.getElementById('permissaoCameraCard').style.display = 'block';
+                return false;
+            }
+        }
+
+        // Solicitar permissão da câmera
+        window.solicitarPermissaoCamera = function() {
+            document.getElementById('modalPermissaoCamera').classList.remove('hidden');
+        };
+
+        window.solicitarPermissaoCameraAgora = async function() {
+            fecharModalPermissao();
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
+                stream.getTracks().forEach(track => track.stop());
+                document.getElementById('permissaoCameraCard').style.display = 'none';
+                mostrarNotificacao('✅ Permissão concedida! Inicie o scanner.', 'success');
+            } catch (error) {
+                mostrarNotificacao('❌ Permissão negada. Verifique as configurações do navegador.', 'error');
+            }
+        };
+
+        window.fecharModalPermissao = function() {
+            document.getElementById('modalPermissaoCamera').classList.add('hidden');
+        };
+
         // Iniciar scanner
-        window.startScanner = function () {
-            if (!baserowConfig.token) {
-                mostrarNotificacao('❌ Configure o token do Baserow primeiro', 'error');
+        window.startScanner = async function() {
+            if (!baserowConfig.token || !baserowConfig.tables.etiquetas) {
+                mostrarNotificacao('⚠️ Configure a API do Baserow primeiro', 'warning');
                 switchTab('config');
+                return;
+            }
+
+            const temCamera = await verificarPermissaoCamera();
+            if (!temCamera) {
+                solicitarPermissaoCamera();
                 return;
             }
 
@@ -878,6 +1020,8 @@
 
             const qrCodeSuccessCallback = (decodedText, decodedResult) => {
                 console.log('QR Code lido:', decodedText);
+                // Vibrar se suportado
+                if (navigator.vibrate) navigator.vibrate(200);
                 handleQRCode(decodedText);
                 stopScanner();
             };
@@ -890,26 +1034,29 @@
                 showTorchButtonIfSupported: true
             };
 
-            html5QrcodeScanner.start(
-                { facingMode: "environment" },
-                config,
-                qrCodeSuccessCallback,
-                (errorMessage) => {
-                    // Erros silenciosos
-                }
-            ).then(() => {
+            try {
+                await html5QrcodeScanner.start(
+                    { facingMode: "environment" }, // Força câmera traseira
+                    config,
+                    qrCodeSuccessCallback,
+                    (errorMessage) => {
+                        // Ignorar erros de leitura
+                    }
+                );
+                
                 isScanning = true;
                 document.getElementById('startScannerBtn').style.display = 'none';
                 document.getElementById('stopScannerBtn').style.display = 'block';
-                mostrarNotificacao('📷 Scanner iniciado! Aponte para o QR Code.', 'info');
-            }).catch((err) => {
+                mostrarNotificacao('📷 Scanner iniciado!', 'success');
+            } catch (err) {
                 console.error('Erro ao iniciar scanner:', err);
-                mostrarNotificacao('❌ Erro ao acessar a câmera', 'error');
-            });
+                mostrarNotificacao('❌ Erro ao acessar câmera traseira', 'error');
+                document.getElementById('permissaoCameraCard').style.display = 'block';
+            }
         };
 
         // Parar scanner
-        window.stopScanner = function () {
+        window.stopScanner = function() {
             if (html5QrcodeScanner && isScanning) {
                 html5QrcodeScanner.stop().then(() => {
                     isScanning = false;
@@ -924,9 +1071,9 @@
 
         // Processar QR Code lido
         async function handleQRCode(qrData) {
-            // Extrair ID do QR Code (formato esperado: PCI:ID123 ou apenas ID)
+            // Extrair ID do QR Code
             let qrId = qrData.replace('PCI:', '').trim();
-
+            
             if (!qrId) {
                 mostrarNotificacao('❌ QR Code inválido', 'error');
                 return;
@@ -937,21 +1084,18 @@
             document.getElementById('qrResultCard').style.display = 'block';
             document.getElementById('loadingIndicator').style.display = 'flex';
             document.getElementById('extintorDetails').style.display = 'none';
-
-            // Mostrar loading
+            
             document.getElementById('qrExtintorId').textContent = 'Consultando...';
             document.getElementById('qrClienteNome').textContent = 'Aguarde...';
 
             try {
-                // Buscar dados da etiqueta no Baserow
                 const etiquetaData = await buscarEtiqueta(qrId);
-
+                
                 if (etiquetaData) {
                     document.getElementById('qrExtintorId').textContent = etiquetaData.extintorId || 'N/I';
                     document.getElementById('qrClienteNome').textContent = etiquetaData.clienteNome || 'N/I';
-
-                    // Buscar dados completos do extintor
-                    if (etiquetaData.extintorId) {
+                    
+                    if (etiquetaData.extintorId && baserowConfig.tables.extintores) {
                         const extintorData = await buscarExtintor(etiquetaData.extintorId);
                         if (extintorData) {
                             document.getElementById('extClasse').textContent = extintorData.classe || '-';
@@ -960,12 +1104,11 @@
                             document.getElementById('extValidade').textContent = formatarData(extintorData.validade) || '-';
                             document.getElementById('extRecarga').textContent = formatarData(extintorData.recarga) || '-';
                             document.getElementById('extLocal').textContent = etiquetaData.localInstalacao || '-';
-
+                            
                             document.getElementById('extintorDetails').style.display = 'block';
                         }
                     }
 
-                    // Adicionar ao histórico
                     adicionarAoHistorico({
                         id: qrId,
                         data: new Date().toLocaleString(),
@@ -974,14 +1117,14 @@
                         local: etiquetaData.localInstalacao || '-'
                     });
 
-                    mostrarNotificacao('✅ Dados carregados com sucesso!', 'success');
+                    mostrarNotificacao('✅ Dados carregados!', 'success');
                 } else {
                     document.getElementById('qrExtintorId').textContent = 'Não encontrado';
                     document.getElementById('qrClienteNome').textContent = 'Não encontrado';
                     mostrarNotificacao('⚠️ QR Code não encontrado no Baserow', 'warning');
                 }
             } catch (error) {
-                console.error('Erro ao buscar dados:', error);
+                console.error('Erro:', error);
                 document.getElementById('qrExtintorId').textContent = 'Erro';
                 document.getElementById('qrClienteNome').textContent = 'Erro na consulta';
                 mostrarNotificacao(`❌ Erro: ${error.message}`, 'error');
@@ -1011,11 +1154,10 @@
             }
 
             const data = await response.json();
-
+            
             if (data.results && data.results.length > 0) {
                 const etiqueta = data.results[0];
-
-                // Buscar nome do cliente se houver ID
+                
                 let clienteNome = 'N/I';
                 if (etiqueta.Cliente && baserowConfig.tables.clientes) {
                     try {
@@ -1040,8 +1182,7 @@
                 return {
                     extintorId: etiqueta.Extintor || etiqueta.extintorId || 'N/I',
                     clienteNome: clienteNome,
-                    localInstalacao: etiqueta['Local Instalação'] || etiqueta.localInstalacao || '-',
-                    dataHora: etiqueta['Data Hora'] || etiqueta.dataHora || '-'
+                    localInstalacao: etiqueta['Local Instalação'] || etiqueta.localInstalacao || '-'
                 };
             }
 
@@ -1064,12 +1205,10 @@
                 }
             );
 
-            if (!response.ok) {
-                return null;
-            }
+            if (!response.ok) return null;
 
             const data = await response.json();
-
+            
             if (data.results && data.results.length > 0) {
                 const ext = data.results[0];
                 return {
@@ -1087,12 +1226,11 @@
         // Adicionar ao histórico
         function adicionarAoHistorico(item) {
             historicoLeituras.unshift(item);
-
-            // Manter apenas os últimos 20
+            
             if (historicoLeituras.length > 20) {
                 historicoLeituras = historicoLeituras.slice(0, 20);
             }
-
+            
             localStorage.setItem('historicoLeituras', JSON.stringify(historicoLeituras));
             atualizarHistorico();
         }
@@ -1100,11 +1238,11 @@
         // Atualizar lista de histórico
         function atualizarHistorico() {
             const lista = document.getElementById('historicoLista');
-
+            
             if (historicoLeituras.length === 0) {
                 lista.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #6B7A8F;">
-                        <i class="fas fa-qrcode" style="font-size: 3rem; margin-bottom: 16px; opacity: 0.3;"></i>
+                    <div style="text-align: center; padding: 30px; color: #6B7A8F;">
+                        <i class="fas fa-qrcode" style="font-size: 2.5rem; margin-bottom: 12px; opacity: 0.3;"></i>
                         <p>Nenhuma leitura realizada ainda</p>
                     </div>
                 `;
@@ -1141,31 +1279,36 @@
         }
 
         // Limpar resultado atual
-        window.limparResultado = function () {
+        window.limparResultado = function() {
             document.getElementById('qrResultCard').style.display = 'none';
             ultimoQRCode = null;
         };
 
-        // Consultar novamente o mesmo QR Code
-        window.consultarNovamente = function () {
+        // Consultar novamente
+        window.consultarNovamente = function() {
             if (ultimoQRCode) {
                 handleQRCode(ultimoQRCode);
             }
         };
 
         // Trocar entre tabs
-        window.switchTab = function (tab) {
+        window.switchTab = function(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
-
-            document.getElementById('scannerTab').classList.add('hidden');
-            document.getElementById('historicoTab').classList.add('hidden');
-            document.getElementById('configTab').classList.add('hidden');
-
-            document.getElementById(tab + 'Tab').classList.remove('hidden');
-
-            if (tab === 'historico') {
+            if (tab === 'scanner') {
+                document.getElementById('tabScanner').classList.add('active');
+                document.getElementById('scannerTab').classList.remove('hidden');
+                document.getElementById('historicoTab').classList.add('hidden');
+                document.getElementById('configTab').classList.add('hidden');
+            } else if (tab === 'historico') {
+                document.getElementById('tabHistorico').classList.add('active');
+                document.getElementById('scannerTab').classList.add('hidden');
+                document.getElementById('historicoTab').classList.remove('hidden');
+                document.getElementById('configTab').classList.add('hidden');
                 atualizarHistorico();
+            } else if (tab === 'config') {
+                document.getElementById('scannerTab').classList.add('hidden');
+                document.getElementById('historicoTab').classList.add('hidden');
+                document.getElementById('configTab').classList.remove('hidden');
             }
         };
 
@@ -1174,29 +1317,15 @@
             const notification = document.getElementById('notification');
             const icon = document.getElementById('notificationIcon');
             const message = document.getElementById('notificationMessage');
-
+            
             message.textContent = mensagem;
-
-            switch (tipo) {
-                case 'success':
-                    icon.className = 'fas fa-check-circle';
-                    icon.style.color = '#4CAF50';
-                    break;
-                case 'error':
-                    icon.className = 'fas fa-times-circle';
-                    icon.style.color = '#F44336';
-                    break;
-                case 'warning':
-                    icon.className = 'fas fa-exclamation-triangle';
-                    icon.style.color = '#FF9800';
-                    break;
-                default:
-                    icon.className = 'fas fa-info-circle';
-                    icon.style.color = '#2196F3';
-            }
-
+            
+            icon.className = tipo === 'success' ? 'fas fa-check-circle' : 
+                           tipo === 'error' ? 'fas fa-times-circle' :
+                           tipo === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
+            
             notification.classList.remove('hidden');
-
+            
             setTimeout(() => {
                 notification.classList.add('hidden');
             }, 3000);
@@ -1213,37 +1342,14 @@
             }
         }
 
-        // Fechar modal
-        window.fecharModal = function () {
-            document.getElementById('modalConfirm').classList.add('hidden');
-        };
-
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
             carregarConfig();
             atualizarHistorico();
-
-            // Verificar permissão da câmera
-            if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-                navigator.mediaDevices.enumerateDevices()
-                    .then(devices => {
-                        const cameras = devices.filter(d => d.kind === 'videoinput');
-                        if (cameras.length === 0) {
-                            mostrarNotificacao('⚠️ Nenhuma câmera encontrada', 'warning');
-                        }
-                    })
-                    .catch(() => { });
-            }
-        });
-
-        // Prevenir scroll quando modal estiver aberto
-        window.addEventListener('load', () => {
-            // Verificar se é dispositivo mobile
-            if (window.innerWidth <= 480) {
-                document.body.style.overflow = 'hidden';
-            }
+            
+            // Verificar permissão da câmera ao carregar
+            setTimeout(verificarPermissaoCamera, 1000);
         });
     </script>
 </body>
-
 </html>
