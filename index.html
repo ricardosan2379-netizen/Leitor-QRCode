@@ -1095,7 +1095,8 @@
                     document.getElementById('qrExtintorId').textContent = etiquetaData.extintorId || 'N/I';
                     document.getElementById('qrClienteNome').textContent = etiquetaData.clienteNome || 'N/I';
                     
-                    if (etiquetaData.extintorId && baserowConfig.tables.extintores) {
+                    // Buscar dados do extintor se tiver o ID
+                    if (etiquetaData.extintorId && etiquetaData.extintorId !== 'N/I' && baserowConfig.tables.extintores) {
                         const extintorData = await buscarExtintor(etiquetaData.extintorId);
                         if (extintorData) {
                             document.getElementById('extClasse').textContent = extintorData.classe || '-';
@@ -1106,7 +1107,15 @@
                             document.getElementById('extLocal').textContent = etiquetaData.localInstalacao || '-';
                             
                             document.getElementById('extintorDetails').style.display = 'block';
+                        } else {
+                            // Se não encontrar o extintor, ainda assim mostra o local
+                            document.getElementById('extLocal').textContent = etiquetaData.localInstalacao || '-';
+                            document.getElementById('extintorDetails').style.display = 'block';
                         }
+                    } else {
+                        // Se não tiver ID do extintor, mostra apenas o local
+                        document.getElementById('extLocal').textContent = etiquetaData.localInstalacao || '-';
+                        document.getElementById('extintorDetails').style.display = 'block';
                     }
 
                     adicionarAoHistorico({
@@ -1139,88 +1148,156 @@
                 throw new Error('Configuração do Baserow incompleta');
             }
 
-            const response = await fetch(
-                `${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&filters__ID_Etiqueta__contains=${encodeURIComponent(qrId)}`,
-                {
-                    headers: {
-                        'Authorization': `Token ${baserowConfig.token}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error('Erro ao consultar Baserow');
-            }
-
-            const data = await response.json();
-            
-            if (data.results && data.results.length > 0) {
-                const etiqueta = data.results[0];
-                
-                let clienteNome = 'N/I';
-                if (etiqueta.Cliente && baserowConfig.tables.clientes) {
-                    try {
-                        const clienteResponse = await fetch(
-                            `${baserowConfig.url}database/rows/table/${baserowConfig.tables.clientes}/${etiqueta.Cliente}/?user_field_names=true`,
-                            {
-                                headers: {
-                                    'Authorization': `Token ${baserowConfig.token}`,
-                                    'Content-Type': 'application/json'
-                                }
-                            }
-                        );
-                        if (clienteResponse.ok) {
-                            const clienteData = await clienteResponse.json();
-                            clienteNome = clienteData.Nome || clienteData.nome || 'N/I';
+            try {
+                // Primeiro tenta buscar por campo ID_Etiqueta
+                let response = await fetch(
+                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&filters__ID_Etiqueta__equal=${encodeURIComponent(qrId)}`,
+                    {
+                        headers: {
+                            'Authorization': `Token ${baserowConfig.token}`,
+                            'Content-Type': 'application/json'
                         }
-                    } catch (e) {
-                        console.warn('Erro ao buscar cliente:', e);
                     }
+                );
+
+                if (!response.ok) {
+                    throw new Error('Erro ao consultar Baserow');
                 }
 
-                return {
-                    extintorId: etiqueta.Extintor || etiqueta.extintorId || 'N/I',
-                    clienteNome: clienteNome,
-                    localInstalacao: etiqueta['Local Instalação'] || etiqueta.localInstalacao || '-'
-                };
-            }
+                let data = await response.json();
+                
+                // Se não encontrou, tenta buscar por outros campos comuns
+                if (!data.results || data.results.length === 0) {
+                    response = await fetch(
+                        `${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&search=${encodeURIComponent(qrId)}`,
+                        {
+                            headers: {
+                                'Authorization': `Token ${baserowConfig.token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        }
+                    );
+                    
+                    if (response.ok) {
+                        data = await response.json();
+                    }
+                }
+                
+                if (data.results && data.results.length > 0) {
+                    const etiqueta = data.results[0];
+                    
+                    // Mapear campos da etiqueta (tentando diferentes nomes possíveis)
+                    let extintorId = etiqueta.Extintor || etiqueta.extintorId || etiqueta.extintor_id || etiqueta['Extintor ID'] || 'N/I';
+                    
+                    // Se extintorId for um objeto (link para outra tabela), tenta extrair o ID
+                    if (extintorId && typeof extintorId === 'object' && extintorId.id) {
+                        extintorId = extintorId.id.toString();
+                    }
+                    
+                    let clienteNome = 'N/I';
+                    
+                    // Buscar dados do cliente se tiver ID
+                    if (etiqueta.Cliente && baserowConfig.tables.clientes) {
+                        try {
+                            let clienteId = etiqueta.Cliente;
+                            if (typeof clienteId === 'object' && clienteId.id) {
+                                clienteId = clienteId.id;
+                            }
+                            
+                            const clienteResponse = await fetch(
+                                `${baserowConfig.url}database/rows/table/${baserowConfig.tables.clientes}/${clienteId}/?user_field_names=true`,
+                                {
+                                    headers: {
+                                        'Authorization': `Token ${baserowConfig.token}`,
+                                        'Content-Type': 'application/json'
+                                    }
+                                }
+                            );
+                            if (clienteResponse.ok) {
+                                const clienteData = await clienteResponse.json();
+                                clienteNome = clienteData.Nome || clienteData.nome || clienteData.Cliente || clienteData['Nome Cliente'] || 'N/I';
+                            }
+                        } catch (e) {
+                            console.warn('Erro ao buscar cliente:', e);
+                        }
+                    }
 
-            return null;
+                    // Local de instalação (tentando diferentes nomes)
+                    const localInstalacao = etiqueta['Local Instalação'] || etiqueta.localInstalacao || etiqueta.local || etiqueta.Local || '-';
+
+                    return {
+                        extintorId: extintorId,
+                        clienteNome: clienteNome,
+                        localInstalacao: localInstalacao
+                    };
+                }
+
+                return null;
+            } catch (error) {
+                console.error('Erro em buscarEtiqueta:', error);
+                throw error;
+            }
         }
 
         // Buscar extintor no Baserow
         async function buscarExtintor(extintorId) {
-            if (!baserowConfig.token || !baserowConfig.tables.extintores) {
+            if (!baserowConfig.token || !baserowConfig.tables.extintores || !extintorId || extintorId === 'N/I') {
                 return null;
             }
 
-            const response = await fetch(
-                `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&filters__Nº_Extintor__contains=${encodeURIComponent(extintorId)}`,
-                {
-                    headers: {
-                        'Authorization': `Token ${baserowConfig.token}`,
-                        'Content-Type': 'application/json'
+            try {
+                // Tenta buscar por ID direto primeiro
+                let response = await fetch(
+                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/${extintorId}/?user_field_names=true`,
+                    {
+                        headers: {
+                            'Authorization': `Token ${baserowConfig.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (response.ok) {
+                    const extintor = await response.json();
+                    return {
+                        classe: extintor.Classe || extintor.classe || '-',
+                        tipo: extintor.Tipo || extintor.tipo || '-',
+                        kg: extintor.Kg || extintor.kg || extintor.Carga || extintor.carga || '-',
+                        validade: extintor['Data da Validade'] || extintor.validade || extintor['Validade'] || '-',
+                        recarga: extintor['Data da Recarga'] || extintor.recarga || extintor['Última Recarga'] || '-'
+                    };
+                }
+
+                // Se não encontrou por ID direto, tenta buscar por número do extintor
+                response = await fetch(
+                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&filters__Nº_Extintor__equal=${encodeURIComponent(extintorId)}`,
+                    {
+                        headers: {
+                            'Authorization': `Token ${baserowConfig.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.results && data.results.length > 0) {
+                        const extintor = data.results[0];
+                        return {
+                            classe: extintor.Classe || extintor.classe || '-',
+                            tipo: extintor.Tipo || extintor.tipo || '-',
+                            kg: extintor.Kg || extintor.kg || extintor.Carga || extintor.carga || '-',
+                            validade: extintor['Data da Validade'] || extintor.validade || extintor['Validade'] || '-',
+                            recarga: extintor['Data da Recarga'] || extintor.recarga || extintor['Última Recarga'] || '-'
+                        };
                     }
                 }
-            );
 
-            if (!response.ok) return null;
-
-            const data = await response.json();
-            
-            if (data.results && data.results.length > 0) {
-                const ext = data.results[0];
-                return {
-                    classe: ext.Classe || ext.classe || '-',
-                    tipo: ext.Tipo || ext.tipo || '-',
-                    kg: ext.Kg || ext.kg || '-',
-                    validade: ext['Data da Validade'] || ext.validade || '-',
-                    recarga: ext['Data da Recarga'] || ext.recarga || '-'
-                };
+                return null;
+            } catch (error) {
+                console.error('Erro em buscarExtintor:', error);
+                return null;
             }
-
-            return null;
         }
 
         // Adicionar ao histórico
@@ -1333,10 +1410,14 @@
 
         // Formatar data
         function formatarData(dataISO) {
-            if (!dataISO) return '-';
+            if (!dataISO || dataISO === '-') return '-';
             try {
-                const [ano, mes, dia] = dataISO.split('-');
-                return `${dia}/${mes}/${ano}`;
+                // Se for string ISO (YYYY-MM-DD)
+                if (dataISO.includes('-')) {
+                    const [ano, mes, dia] = dataISO.split('T')[0].split('-');
+                    return `${dia}/${mes}/${ano}`;
+                }
+                return dataISO;
             } catch {
                 return dataISO;
             }
