@@ -819,7 +819,7 @@
                         <i class="fas fa-info-circle"></i> Sobre
                     </div>
                     <p style="color: #4A5B6E; font-size: 0.85rem; line-height: 1.5;">
-                        <strong>PCI Scanner v1.3</strong><br>
+                        <strong>PCI Scanner v1.4</strong><br>
                         Leitor de QR Code para extintores.<br>
                         Aponte a câmera para um QR Code para visualizar os dados.
                     </p>
@@ -896,7 +896,7 @@
 
         // Dados dos extintores baseado nas imagens fornecidas
         const extintoresMock = {
-            // Primeiro extintor (da imagem anterior)
+            // Primeiro extintor (sala)
             'PCI:ETQ1773024707379': {
                 id: 'EXT001',
                 classe: 'B',
@@ -907,7 +907,7 @@
                 cliente: 'Ricardo Barbosa',
                 local: 'sala'
             },
-            // Novo extintor (da imagem x1.jpeg)
+            // Segundo extintor (recepção - CO2)
             'PCI:ETQ1773025395410': {
                 id: 'EXT003',
                 classe: 'A',
@@ -915,6 +915,17 @@
                 carga: '2kg',
                 validade: '09/03/2027',
                 recarga: '07/03/2026',
+                cliente: 'Ricardo Barbosa',
+                local: 'recepção'
+            },
+            // Terceiro extintor (recepção - Água)
+            'PCI:ETQ1773026048054': {
+                id: 'EXT004',
+                classe: 'C',
+                tipo: 'Água',
+                carga: '6kg',
+                validade: '09/03/2027',
+                recarga: '05/03/2026',
                 cliente: 'Ricardo Barbosa',
                 local: 'recepção'
             }
@@ -1105,7 +1116,7 @@
 
         // Processar QR Code lido
         async function handleQRCode(qrData) {
-            // O QR Code contém o ID da etiqueta (ex: "PCI:ETQ1773025395410")
+            // O QR Code contém o ID da etiqueta (ex: "PCI:ETQ1773026048054")
             let etiquetaId = qrData.trim();
             
             if (!etiquetaId) {
