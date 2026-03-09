@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PCI Scanner - Leitor QR Code</title>
     <!-- Fontes e ícones -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -39,7 +41,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
         }
 
         .app-header {
@@ -49,13 +51,13 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .header-logo {
             width: 44px;
             height: 44px;
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 14px;
             display: flex;
             align-items: center;
@@ -99,7 +101,7 @@
             padding: 20px;
             margin-bottom: 16px;
             box-shadow: 0 4px 12px rgba(0, 20, 40, 0.04);
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .card-title {
@@ -154,9 +156,9 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            border: 3px solid rgba(255,255,255,0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 24px;
-            box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
+            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
         }
 
         .scanner-line {
@@ -168,9 +170,17 @@
         }
 
         @keyframes scan {
-            0% { top: 0; }
-            50% { top: 100%; }
-            100% { top: 0; }
+            0% {
+                top: 0;
+            }
+
+            50% {
+                top: 100%;
+            }
+
+            100% {
+                top: 0;
+            }
         }
 
         .btn-scanner {
@@ -220,7 +230,7 @@
             align-items: center;
             gap: 12px;
             padding: 8px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .qr-info-item:last-child {
@@ -302,7 +312,7 @@
             border-radius: 40px;
             padding: 4px;
             margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         }
 
         .tab {
@@ -394,7 +404,7 @@
             width: 30px;
             height: 30px;
             border-radius: 30px;
-            background: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.9);
             border: none;
             display: flex;
             align-items: center;
@@ -468,7 +478,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .app-footer {
@@ -486,7 +498,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
@@ -550,7 +562,7 @@
             background: white;
             border-radius: 30px;
             padding: 10px 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             z-index: 2000;
             display: flex;
             align-items: center;
@@ -560,8 +572,15 @@
         }
 
         @keyframes slideDown {
-            from { top: -50px; opacity: 0; }
-            to { top: 16px; opacity: 1; }
+            from {
+                top: -50px;
+                opacity: 0;
+            }
+
+            to {
+                top: 16px;
+                opacity: 1;
+            }
         }
 
         .config-section {
@@ -626,21 +645,9 @@
             background: #1E3B5A;
             color: white;
         }
-        
-        /* Debug info */
-        .debug-info {
-            font-size: 0.7rem;
-            color: #666;
-            margin-top: 8px;
-            padding: 8px;
-            background: #f0f0f0;
-            border-radius: 8px;
-            display: none;
-            max-height: 100px;
-            overflow-y: auto;
-        }
     </style>
 </head>
+
 <body>
     <div class="app-container">
         <!-- Header -->
@@ -695,7 +702,8 @@
                 <button class="btn-scanner" onclick="startScanner()" id="startScannerBtn">
                     <i class="fas fa-play"></i> Iniciar Scanner
                 </button>
-                <button class="btn-scanner secondary" onclick="stopScanner()" id="stopScannerBtn" style="display: none;">
+                <button class="btn-scanner secondary" onclick="stopScanner()" id="stopScannerBtn"
+                    style="display: none;">
                     <i class="fas fa-stop"></i> Parar Scanner
                 </button>
 
@@ -767,14 +775,11 @@
                             <i class="fas fa-times"></i> Limpar
                         </button>
                     </div>
-                    
-                    <!-- Debug info -->
-                    <div class="debug-info" id="debugInfo"></div>
                 </div>
 
                 <div class="loading" id="loadingIndicator" style="display: none;">
                     <div class="spinner"></div>
-                    <p>Consultando dados no Baserow...</p>
+                    <p>Consultando dados...</p>
                 </div>
             </div>
 
@@ -805,23 +810,22 @@
             <div id="configTab" class="tab-content hidden">
                 <div class="config-section">
                     <div class="config-section-title">
-                        <i class="fas fa-database"></i> Conexão Baserow
+                        <i class="fas fa-database"></i> Conexão API
                     </div>
-                    
+
                     <div class="config-label">URL da API</div>
-                    <input type="text" class="config-input" id="baserowUrl" placeholder="https://api.baserow.io/api/" value="https://api.baserow.io/api/">
-                    
+                    <input type="text" class="config-input" id="baserowUrl" placeholder="https://api.exemplo.com/"
+                        value="https://api.baserow.io/api/">
+
                     <div class="config-label">Token da Base</div>
                     <input type="password" class="config-input" id="baserowToken" placeholder="Token de autenticação">
-                    
+
                     <div class="config-label" style="margin-top: 8px;">ID Tabela Extintores</div>
-                    <input type="text" class="config-input" id="tableExtintores" placeholder="ID da tabela de extintores">
-                    
+                    <input type="text" class="config-input" id="tableExtintores"
+                        placeholder="ID da tabela de extintores">
+
                     <div class="config-label">ID Tabela Clientes</div>
                     <input type="text" class="config-input" id="tableClientes" placeholder="ID da tabela de clientes">
-                    
-                    <div class="config-label">ID Tabela Etiquetas</div>
-                    <input type="text" class="config-input" id="tableEtiquetas" placeholder="ID da tabela de etiquetas (872419)">
 
                     <div class="config-actions">
                         <button onclick="salvarConfig()" class="primary">
@@ -838,8 +842,8 @@
                         <i class="fas fa-info-circle"></i> Sobre
                     </div>
                     <p style="color: #4A5B6E; font-size: 0.85rem; line-height: 1.5;">
-                        <strong>PCI Scanner v2.1</strong><br>
-                        Leitor de QR Code integrado ao Baserow.<br>
+                        <strong>PCI Scanner v1.2</strong><br>
+                        Leitor de QR Code para extintores.<br>
                         Aponte a câmera para um QR Code para visualizar os dados.
                     </p>
                 </div>
@@ -859,7 +863,7 @@
                 <i class="fas fa-camera"></i> Acesso à Câmera
             </div>
             <p style="color: #4A5B6E; margin-bottom: 16px;">
-                Para ler QR Codes, precisamos acessar sua câmera traseira. 
+                Para ler QR Codes, precisamos acessar sua câmera traseira.
                 Por favor, permita o acesso quando solicitado pelo navegador.
             </p>
             <div class="modal-buttons">
@@ -896,33 +900,24 @@
     </div>
 
     <script>
-        // ================== VARIÁVEIS GLOBAIS ==================
+        // Variáveis globais
         let html5QrcodeScanner = null;
         let isScanning = false;
         let historicoLeituras = JSON.parse(localStorage.getItem('historicoLeituras')) || [];
         let ultimoQRCode = null;
         let itemParaRemover = null;
-        let ultimoRegistroSalvo = null;
 
-        // Configuração Baserow
+        // Configuração da API
         let baserowConfig = {
             url: 'https://api.baserow.io/api/',
             token: '',
             tables: {
                 extintores: '',
-                clientes: '',
-                etiquetas: '872419' // ID da tabela de etiquetas
+                clientes: ''
             }
         };
 
-        // Cache de dados
-        let cacheExtintores = null;
-        let cacheClientes = null;
-        let cacheEtiquetas = null;
-        let ultimaAtualizacaoCache = 0;
-        const CACHE_DURATION = 60000; // 1 minuto
-
-        // ================== FUNÇÕES DE CONFIGURAÇÃO ==================
+        // Carregar configurações salvas
         function carregarConfig() {
             const saved = localStorage.getItem('baserowConfig');
             if (saved) {
@@ -932,7 +927,6 @@
                     document.getElementById('baserowToken').value = baserowConfig.token;
                     document.getElementById('tableExtintores').value = baserowConfig.tables.extintores;
                     document.getElementById('tableClientes').value = baserowConfig.tables.clientes;
-                    document.getElementById('tableEtiquetas').value = baserowConfig.tables.etiquetas || '872419';
                 } catch (e) {
                     console.error('Erro ao carregar config:', e);
                 }
@@ -940,28 +934,24 @@
             verificarConexao();
         }
 
-        window.salvarConfig = function() {
+        // Salvar configurações
+        window.salvarConfig = function () {
             baserowConfig = {
                 url: document.getElementById('baserowUrl').value,
                 token: document.getElementById('baserowToken').value,
                 tables: {
                     extintores: document.getElementById('tableExtintores').value,
-                    clientes: document.getElementById('tableClientes').value,
-                    etiquetas: document.getElementById('tableEtiquetas').value || '872419'
+                    clientes: document.getElementById('tableClientes').value
                 }
             };
 
             localStorage.setItem('baserowConfig', JSON.stringify(baserowConfig));
             mostrarNotificacao('✅ Configurações salvas!', 'success');
             verificarConexao();
-            
-            // Limpar cache ao salvar novas configurações
-            cacheExtintores = null;
-            cacheClientes = null;
-            cacheEtiquetas = null;
         };
 
-        window.testarConexao = async function() {
+        // Testar conexão com a API
+        window.testarConexao = async function () {
             if (!baserowConfig.token) {
                 mostrarNotificacao('❌ Token não configurado', 'error');
                 return;
@@ -982,8 +972,7 @@
                     mostrarNotificacao('✅ Conexão estabelecida!', 'success');
                     document.getElementById('connectionStatus').style.background = '#4CAF50';
                 } else {
-                    const errorData = await response.json();
-                    mostrarNotificacao(`❌ Falha na conexão: ${errorData.error || 'Erro desconhecido'}`, 'error');
+                    mostrarNotificacao('❌ Falha na conexão', 'error');
                     document.getElementById('connectionStatus').style.background = '#F44336';
                 }
             } catch (error) {
@@ -992,14 +981,15 @@
             }
         };
 
+        // Verificar conexão
         async function verificarConexao() {
-            if (!baserowConfig.token || !baserowConfig.tables.extintores) {
+            if (!baserowConfig.token) {
                 document.getElementById('connectionStatus').style.background = '#F44336';
                 return;
             }
 
             try {
-                const response = await fetch(`${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&size=1`, {
+                const response = await fetch(`${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores || '1'}/?user_field_names=true&size=1`, {
                     headers: {
                         'Authorization': `Token ${baserowConfig.token}`
                     }
@@ -1011,220 +1001,12 @@
             }
         }
 
-        // ================== FUNÇÕES DE BUSCA DE DADOS ==================
-        
-        // Buscar todos os extintores do Baserow
-        async function buscarTodosExtintores() {
-            const agora = Date.now();
-            
-            if (cacheExtintores && (agora - ultimaAtualizacaoCache) < CACHE_DURATION) {
-                return cacheExtintores;
-            }
-            
-            if (!baserowConfig.token || !baserowConfig.tables.extintores) {
-                throw new Error('Configuração do Baserow incompleta');
-            }
-
-            try {
-                const response = await fetch(
-                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&size=200`,
-                    {
-                        headers: {
-                            'Authorization': `Token ${baserowConfig.token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    }
-                );
-
-                if (!response.ok) {
-                    throw new Error(`Erro ${response.status}: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                
-                if (data.results && data.results.length > 0) {
-                    cacheExtintores = data.results.map(ext => ({
-                        id: ext['Nº Extintor'] || ext.ID || ext.id || '',
-                        classe: ext.Classe || ext.classe || '',
-                        tipo: ext.Tipo || ext.tipo || '',
-                        kg: ext.Kg || ext.kg || ext.Carga || '',
-                        validade: ext['Data da Validade'] || ext.Validade || ext.validade || '',
-                        recarga: ext['Data da Recarga'] || ext.Recarga || ext.recarga || '',
-                        empresaId: ext['Empresa Executora'] || ext.empresaId || null
-                    }));
-                    
-                    ultimaAtualizacaoCache = agora;
-                }
-                
-                return cacheExtintores || [];
-            } catch (error) {
-                console.error('Erro ao buscar extintores:', error);
-                throw error;
-            }
-        }
-
-        // Buscar todos os clientes do Baserow
-        async function buscarTodosClientes() {
-            const agora = Date.now();
-            
-            if (cacheClientes && (agora - ultimaAtualizacaoCache) < CACHE_DURATION) {
-                return cacheClientes;
-            }
-            
-            if (!baserowConfig.token || !baserowConfig.tables.clientes) {
-                return [];
-            }
-
-            try {
-                const response = await fetch(
-                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.clientes}/?user_field_names=true&size=200`,
-                    {
-                        headers: {
-                            'Authorization': `Token ${baserowConfig.token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    }
-                );
-
-                if (!response.ok) {
-                    return [];
-                }
-
-                const data = await response.json();
-                
-                if (data.results) {
-                    cacheClientes = data.results.map(cli => ({
-                        id: cli.ID || cli.id,
-                        nome: cli.Nome || cli.nome || '',
-                        documento: cli.Documento || cli.documento || '',
-                        telefone: cli.Telefone || cli.telefone || ''
-                    }));
-                }
-                
-                return cacheClientes || [];
-            } catch (error) {
-                console.error('Erro ao buscar clientes:', error);
-                return [];
-            }
-        }
-
-        // Buscar todas as etiquetas do Baserow
-        async function buscarTodasEtiquetas() {
-            if (!baserowConfig.token || !baserowConfig.tables.etiquetas) {
-                return [];
-            }
-
-            try {
-                const response = await fetch(
-                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&size=200`,
-                    {
-                        headers: {
-                            'Authorization': `Token ${baserowConfig.token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    }
-                );
-
-                if (!response.ok) {
-                    return [];
-                }
-
-                const data = await response.json();
-                return data.results || [];
-            } catch (error) {
-                console.error('Erro ao buscar etiquetas:', error);
-                return [];
-            }
-        }
-
-        // ================== FUNÇÃO PARA SALVAR LEITURA NO BASEROW ==================
-        async function salvarLeituraNoBaserow(etiquetaId, dadosExtintor) {
-            if (!baserowConfig.token || !baserowConfig.tables.etiquetas) {
-                console.warn('Tabela de etiquetas não configurada');
-                return null;
-            }
-
-            try {
-                const agora = new Date();
-                const dataHora = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR');
-                
-                // Verificar se já existe uma leitura recente para esta etiqueta
-                if (ultimoRegistroSalvo && 
-                    ultimoRegistroSalvo.etiquetaId === etiquetaId && 
-                    (Date.now() - ultimoRegistroSalvo.timestamp) < 5000) {
-                    console.log('Leitura recente já registrada, ignorando');
-                    return ultimoRegistroSalvo.registro;
-                }
-
-                // Buscar etiquetas existentes para verificar duplicatas
-                const etiquetasExistentes = await buscarTodasEtiquetas();
-                
-                // Verificar se já existe um registro com este ID de etiqueta
-                const registroExistente = etiquetasExistentes.find(e => 
-                    e['ID Etiqueta'] === etiquetaId || 
-                    e['ID Etiqueta'] === etiquetaId.replace('PCI:', '')
-                );
-
-                if (registroExistente) {
-                    console.log('Registro já existe no Baserow, ID:', registroExistente.id);
-                    return registroExistente;
-                }
-
-                // Preparar dados para salvar na tabela de etiquetas (ID: 872419)
-                const dadosRegistro = {
-                    'ID Etiqueta': etiquetaId.replace('PCI:', ''),
-                    'Extintor': dadosExtintor.id,
-                    'Cliente': dadosExtintor.cliente,
-                    'Local Instalação': dadosExtintor.local || 'N/I',
-                    'Data Hora': dataHora,
-                    'criado_por': 'scanner',
-                    'data_criacao': agora.toISOString()
-                };
-
-                console.log('Salvando leitura no Baserow:', dadosRegistro);
-
-                const response = await fetch(
-                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Token ${baserowConfig.token}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(dadosRegistro)
-                    }
-                );
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Erro ao salvar leitura');
-                }
-
-                const result = await response.json();
-                
-                // Guardar último registro para evitar duplicatas
-                ultimoRegistroSalvo = {
-                    etiquetaId: etiquetaId,
-                    registro: result,
-                    timestamp: Date.now()
-                };
-
-                mostrarNotificacao('✅ Leitura registrada no Baserow!', 'success');
-                return result;
-
-            } catch (error) {
-                console.error('Erro ao salvar leitura no Baserow:', error);
-                mostrarNotificacao(`⚠️ Erro ao salvar: ${error.message}`, 'warning');
-                return null;
-            }
-        }
-
-        // ================== FUNÇÕES DO SCANNER ==================
+        // Verificar permissão da câmera
         async function verificarPermissaoCamera() {
             try {
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const cameras = devices.filter(d => d.kind === 'videoinput');
-                
+
                 if (cameras.length === 0) {
                     mostrarNotificacao('⚠️ Nenhuma câmera encontrada', 'warning');
                     document.getElementById('permissaoCameraCard').style.display = 'block';
@@ -1241,15 +1023,16 @@
             }
         }
 
-        window.solicitarPermissaoCamera = function() {
+        // Solicitar permissão da câmera
+        window.solicitarPermissaoCamera = function () {
             document.getElementById('modalPermissaoCamera').classList.remove('hidden');
         };
 
-        window.solicitarPermissaoCameraAgora = async function() {
+        window.solicitarPermissaoCameraAgora = async function () {
             fecharModalPermissao();
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment' } 
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
                 });
                 stream.getTracks().forEach(track => track.stop());
                 document.getElementById('permissaoCameraCard').style.display = 'none';
@@ -1259,13 +1042,14 @@
             }
         };
 
-        window.fecharModalPermissao = function() {
+        window.fecharModalPermissao = function () {
             document.getElementById('modalPermissaoCamera').classList.add('hidden');
         };
 
-        window.startScanner = async function() {
+        // Iniciar scanner
+        window.startScanner = async function () {
             if (!baserowConfig.token || !baserowConfig.tables.extintores) {
-                mostrarNotificacao('⚠️ Configure a API do Baserow primeiro', 'warning');
+                mostrarNotificacao('⚠️ Configure a API primeiro', 'warning');
                 switchTab('config');
                 return;
             }
@@ -1283,7 +1067,7 @@
 
             const qrCodeSuccessCallback = (decodedText) => {
                 if (navigator.vibrate) navigator.vibrate(200);
-                processarQRCode(decodedText);
+                handleQRCode(decodedText);
                 stopScanner();
             };
 
@@ -1292,9 +1076,9 @@
                     { facingMode: "environment" },
                     { fps: 10, qrbox: { width: 250, height: 250 } },
                     qrCodeSuccessCallback,
-                    () => {}
+                    () => { }
                 );
-                
+
                 isScanning = true;
                 document.getElementById('startScannerBtn').style.display = 'none';
                 document.getElementById('stopScannerBtn').style.display = 'block';
@@ -1305,7 +1089,8 @@
             }
         };
 
-        window.stopScanner = function() {
+        // Parar scanner
+        window.stopScanner = function () {
             if (html5QrcodeScanner && isScanning) {
                 html5QrcodeScanner.stop().then(() => {
                     isScanning = false;
@@ -1316,24 +1101,24 @@
         };
 
         // Processar QR Code lido
-        async function processarQRCode(qrData) {
-            let etiquetaId = qrData.trim();
-            
-            if (!etiquetaId) {
+        async function handleQRCode(qrData) {
+            // O QR Code contém o ID do extintor (ex: "EXT001")
+            let extintorId = qrData.trim();
+
+            if (!extintorId) {
                 mostrarNotificacao('❌ QR Code inválido', 'error');
                 return;
             }
 
-            ultimoQRCode = etiquetaId;
-            
-            // Mostrar loading
-            document.getElementById('qrIdDisplay').textContent = etiquetaId.replace('PCI:', '');
+            ultimoQRCode = extintorId;
+            document.getElementById('qrIdDisplay').textContent = extintorId;
             document.getElementById('qrResultCard').style.display = 'block';
             document.getElementById('loadingIndicator').style.display = 'flex';
-            
-            // Limpar dados anteriores
+
             document.getElementById('qrExtintorId').textContent = 'Consultando...';
             document.getElementById('qrClienteNome').textContent = 'Aguarde...';
+
+            // Limpar dados anteriores
             document.getElementById('extEtiquetaId').textContent = '-';
             document.getElementById('extClasse').textContent = '-';
             document.getElementById('extTipo').textContent = '-';
@@ -1341,124 +1126,53 @@
             document.getElementById('extValidade').textContent = '-';
             document.getElementById('extRecarga').textContent = '-';
             document.getElementById('extLocal').textContent = '-';
-            
-            // Mostrar debug
-            document.getElementById('debugInfo').style.display = 'block';
-            document.getElementById('debugInfo').innerHTML = `🔍 Buscando etiqueta: ${etiquetaId}<br>`;
-            
+
             try {
-                // Buscar todos os extintores
-                const extintores = await buscarTodosExtintores();
-                document.getElementById('debugInfo').innerHTML += `📊 Total extintores: ${extintores.length}<br>`;
-                
-                // Buscar clientes
-                const clientes = await buscarTodosClientes();
-                
-                // Extrair o número da etiqueta (remover PCI: se presente)
-                const numeroEtiqueta = etiquetaId.replace('PCI:', '');
-                
-                // Buscar extintor por ID da etiqueta
-                // Primeiro, tentar encontrar pelo ID da etiqueta armazenado
-                let extintorEncontrado = null;
-                
-                // Mapeamento específico para os QR Codes conhecidos
-                const mapaConhecido = {
-                    'PCI:ETQ1773024707379': 'EXT001',
-                    'PCI:ETQ1773025395410': 'EXT002',
-                    'PCI:ETQ1773026048054': 'EXT003'
-                };
-                
-                // Tentar pelo mapeamento primeiro
-                const extintorIdMapeado = mapaConhecido[etiquetaId];
-                if (extintorIdMapeado) {
-                    extintorEncontrado = extintores.find(e => e.id === extintorIdMapeado);
-                    if (extintorEncontrado) {
-                        document.getElementById('debugInfo').innerHTML += `✅ Encontrado por mapeamento: ${extintorIdMapeado}<br>`;
+                // Buscar dados do extintor
+                const extintorData = await buscarExtintor(extintorId);
+
+                if (extintorData) {
+                    document.getElementById('qrExtintorId').textContent = extintorId;
+
+                    // Preencher dados do extintor
+                    document.getElementById('extClasse').textContent = extintorData.classe || '-';
+                    document.getElementById('extTipo').textContent = extintorData.tipo || '-';
+                    document.getElementById('extKg').textContent = extintorData.carga || '-';
+                    document.getElementById('extValidade').textContent = formatarData(extintorData.validade) || '-';
+                    document.getElementById('extRecarga').textContent = formatarData(extintorData.recarga) || '-';
+
+                    // Buscar dados do cliente se tiver ID
+                    if (extintorData.clienteId) {
+                        const clienteData = await buscarCliente(extintorData.clienteId);
+                        document.getElementById('qrClienteNome').textContent = clienteData?.nome || 'N/I';
+                    } else {
+                        document.getElementById('qrClienteNome').textContent = extintorData.clienteNome || 'N/I';
                     }
-                }
-                
-                // Se não encontrou, tentar buscar por todos os campos
-                if (!extintorEncontrado) {
-                    extintorEncontrado = extintores.find(e => 
-                        (e.id && e.id.includes(numeroEtiqueta)) ||
-                        (e.etiquetaId && e.etiquetaId.includes(numeroEtiqueta))
-                    );
-                    
-                    if (extintorEncontrado) {
-                        document.getElementById('debugInfo').innerHTML += `✅ Encontrado por ID relacionado<br>`;
+
+                    // Local
+                    document.getElementById('extLocal').textContent = extintorData.local || '-';
+
+                    // Se tiver ID da etiqueta nos dados
+                    if (extintorData.etiquetaId) {
+                        document.getElementById('extEtiquetaId').textContent = extintorData.etiquetaId;
                     }
-                }
-                
-                if (!extintorEncontrado) {
-                    document.getElementById('debugInfo').innerHTML += `❌ Nenhum extintor encontrado<br>`;
+
+                    adicionarAoHistorico({
+                        id: extintorId,
+                        data: new Date().toLocaleString(),
+                        extintor: extintorId,
+                        cliente: document.getElementById('qrClienteNome').textContent,
+                        local: extintorData.local || '-'
+                    });
+
+                    mostrarNotificacao('✅ Dados carregados!', 'success');
+                } else {
                     document.getElementById('qrExtintorId').textContent = 'Não encontrado';
                     document.getElementById('qrClienteNome').textContent = 'Não encontrado';
                     mostrarNotificacao('⚠️ Extintor não encontrado', 'warning');
-                    
-                    // Mesmo sem encontrar, registrar a leitura
-                    await salvarLeituraNoBaserow(etiquetaId, {
-                        id: 'N/I',
-                        cliente: 'N/I',
-                        local: 'N/I'
-                    });
-                    
-                } else {
-                    // Buscar nome do cliente
-                    let clienteNome = 'N/I';
-                    if (extintorEncontrado.empresaId || extintorEncontrado.clienteId) {
-                        const clienteId = extintorEncontrado.empresaId || extintorEncontrado.clienteId;
-                        const cliente = clientes.find(c => c.id == clienteId);
-                        if (cliente) {
-                            clienteNome = cliente.nome;
-                        }
-                    }
-                    
-                    // Formatar datas
-                    const validadeFormatada = formatarData(extintorEncontrado.validade);
-                    const recargaFormatada = formatarData(extintorEncontrado.recarga);
-                    
-                    document.getElementById('debugInfo').innerHTML += `📝 Dados encontrados:<br>`;
-                    document.getElementById('debugInfo').innerHTML += `- Extintor: ${extintorEncontrado.id}<br>`;
-                    document.getElementById('debugInfo').innerHTML += `- Cliente: ${clienteNome}<br>`;
-                    
-                    // Atualizar interface
-                    document.getElementById('qrExtintorId').textContent = extintorEncontrado.id;
-                    document.getElementById('qrClienteNome').textContent = clienteNome;
-                    
-                    document.getElementById('extEtiquetaId').textContent = numeroEtiqueta;
-                    document.getElementById('extClasse').textContent = extintorEncontrado.classe || '-';
-                    document.getElementById('extTipo').textContent = extintorEncontrado.tipo || '-';
-                    document.getElementById('extKg').textContent = extintorEncontrado.kg || '-';
-                    document.getElementById('extValidade').textContent = validadeFormatada;
-                    document.getElementById('extRecarga').textContent = recargaFormatada;
-                    document.getElementById('extLocal').textContent = 'SALA'; // Local fixo para teste
-                    
-                    // Salvar leitura no Baserow (tabela 872419)
-                    const registroSalvo = await salvarLeituraNoBaserow(etiquetaId, {
-                        id: extintorEncontrado.id,
-                        cliente: clienteNome,
-                        local: 'SALA'
-                    });
-                    
-                    if (registroSalvo) {
-                        document.getElementById('debugInfo').innerHTML += `✅ Registro salvo no Baserow (ID: ${registroSalvo.id})<br>`;
-                    }
-                    
-                    // Adicionar ao histórico local
-                    adicionarAoHistorico({
-                        etiquetaId: numeroEtiqueta,
-                        data: new Date().toLocaleString(),
-                        extintor: extintorEncontrado.id,
-                        cliente: clienteNome,
-                        local: 'SALA'
-                    });
-
-                    mostrarNotificacao('✅ Dados carregados do Baserow!', 'success');
                 }
-                
             } catch (error) {
                 console.error('Erro:', error);
-                document.getElementById('debugInfo').innerHTML += `❌ Erro: ${error.message}<br>`;
                 document.getElementById('qrExtintorId').textContent = 'Erro';
                 document.getElementById('qrClienteNome').textContent = 'Erro na consulta';
                 mostrarNotificacao(`❌ Erro: ${error.message}`, 'error');
@@ -1467,18 +1181,103 @@
             }
         }
 
-        // ================== FUNÇÕES DE HISTÓRICO ==================
+        // Buscar extintor na API
+        async function buscarExtintor(extintorId) {
+            if (!baserowConfig.token || !baserowConfig.tables.extintores) {
+                throw new Error('Configuração da API incompleta');
+            }
+
+            try {
+                // Tenta buscar pelo número do extintor
+                const response = await fetch(
+                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&filters__Nº_Extintor__equal=${encodeURIComponent(extintorId)}`,
+                    {
+                        headers: {
+                            'Authorization': `Token ${baserowConfig.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error('Erro ao consultar API');
+                }
+
+                const data = await response.json();
+
+                if (data.results && data.results.length > 0) {
+                    const extintor = data.results[0];
+
+                    // Extrair dados
+                    return {
+                        classe: extintor.Classe || extintor.classe || '-',
+                        tipo: extintor.Tipo || extintor.tipo || '-',
+                        carga: extintor.Carga || extintor.carga || extintor.Kg || extintor.kg || '-',
+                        validade: extintor.Validade || extintor.validade || extintor['Data Validade'] || '-',
+                        recarga: extintor.Recarga || extintor.recarga || extintor['Última Recarga'] || '-',
+                        clienteId: extintor.Cliente || extintor.clienteId,
+                        clienteNome: extintor['Nome Cliente'] || extintor.clienteNome,
+                        local: extintor.Local || extintor.local || extintor['Local Instalação'] || '-',
+                        etiquetaId: extintor['ID Etiqueta'] || extintor.etiquetaId || extintor.ID_Etiqueta
+                    };
+                }
+
+                return null;
+            } catch (error) {
+                console.error('Erro em buscarExtintor:', error);
+                throw error;
+            }
+        }
+
+        // Buscar cliente na API
+        async function buscarCliente(clienteId) {
+            if (!baserowConfig.token || !baserowConfig.tables.clientes || !clienteId) {
+                return null;
+            }
+
+            try {
+                let id = clienteId;
+                if (typeof clienteId === 'object' && clienteId.id) {
+                    id = clienteId.id;
+                }
+
+                const response = await fetch(
+                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.clientes}/${id}/?user_field_names=true`,
+                    {
+                        headers: {
+                            'Authorization': `Token ${baserowConfig.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (response.ok) {
+                    const cliente = await response.json();
+                    return {
+                        nome: cliente.Nome || cliente.nome || cliente.Cliente || 'N/I'
+                    };
+                }
+
+                return null;
+            } catch (error) {
+                console.error('Erro em buscarCliente:', error);
+                return null;
+            }
+        }
+
+        // Adicionar ao histórico
         function adicionarAoHistorico(item) {
             historicoLeituras.unshift(item);
-            
+
             if (historicoLeituras.length > 20) {
                 historicoLeituras = historicoLeituras.slice(0, 20);
             }
-            
+
             localStorage.setItem('historicoLeituras', JSON.stringify(historicoLeituras));
             atualizarHistorico();
         }
 
+        // Remover item do histórico
         function removerDoHistorico(index) {
             if (index >= 0 && index < historicoLeituras.length) {
                 historicoLeituras.splice(index, 1);
@@ -1488,6 +1287,7 @@
             }
         }
 
+        // Limpar todo o histórico
         function limparHistorico() {
             historicoLeituras = [];
             localStorage.setItem('historicoLeituras', JSON.stringify(historicoLeituras));
@@ -1496,10 +1296,11 @@
             mostrarNotificacao('✅ Histórico limpo com sucesso', 'success');
         }
 
-        window.confirmarRemocao = function(index) {
+        // Confirmar remoção de item
+        window.confirmarRemocao = function (index) {
             itemParaRemover = index;
             document.getElementById('modalConfirmacaoMensagem').textContent = 'Tem certeza que deseja remover este item do histórico?';
-            document.getElementById('modalConfirmarBtn').onclick = function() {
+            document.getElementById('modalConfirmarBtn').onclick = function () {
                 if (itemParaRemover !== null) {
                     removerDoHistorico(itemParaRemover);
                     itemParaRemover = null;
@@ -1508,26 +1309,29 @@
             document.getElementById('modalConfirmacao').classList.remove('hidden');
         };
 
-        window.confirmarLimparHistorico = function() {
+        // Confirmar limpar histórico
+        window.confirmarLimparHistorico = function () {
             if (historicoLeituras.length === 0) {
                 mostrarNotificacao('ℹ️ Histórico já está vazio', 'info');
                 return;
             }
-            
+
             itemParaRemover = null;
             document.getElementById('modalConfirmacaoMensagem').textContent = 'Tem certeza que deseja limpar todo o histórico?';
             document.getElementById('modalConfirmarBtn').onclick = limparHistorico;
             document.getElementById('modalConfirmacao').classList.remove('hidden');
         };
 
-        window.fecharModalConfirmacao = function() {
+        // Fechar modal de confirmação
+        window.fecharModalConfirmacao = function () {
             document.getElementById('modalConfirmacao').classList.add('hidden');
             itemParaRemover = null;
         };
 
+        // Atualizar lista de histórico
         function atualizarHistorico() {
             const lista = document.getElementById('historicoLista');
-            
+
             if (historicoLeituras.length === 0) {
                 lista.innerHTML = `
                     <div style="text-align: center; padding: 30px; color: #6B7A8F;">
@@ -1548,7 +1352,7 @@
                             </button>
                         </div>
                         <div class="etiqueta-header">
-                            <span class="etiqueta-id"><i class="fas fa-hashtag"></i> ${item.etiquetaId || item.id}</span>
+                            <span class="etiqueta-id"><i class="fas fa-hashtag"></i> ${item.id}</span>
                             <span class="etiqueta-data"><i class="far fa-clock"></i> ${item.data}</span>
                         </div>
                         <div class="etiqueta-detalhes">
@@ -1572,69 +1376,72 @@
             lista.innerHTML = html;
         }
 
-        // ================== FUNÇÕES AUXILIARES ==================
-        window.limparResultado = function() {
+        // Limpar resultado atual
+        window.limparResultado = function () {
             document.getElementById('qrResultCard').style.display = 'none';
-            document.getElementById('debugInfo').style.display = 'none';
             ultimoQRCode = null;
         };
 
-        window.consultarNovamente = function() {
+        // Consultar novamente
+        window.consultarNovamente = function () {
             if (ultimoQRCode) {
-                processarQRCode(ultimoQRCode);
+                handleQRCode(ultimoQRCode);
             }
         };
 
-        window.switchTab = function(tab) {
+        // Trocar entre tabs
+        window.switchTab = function (tab) {
+            // Remover classe active de todas as tabs
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+            // Ativar a tab correta
             document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
-            
+
+            // Esconder todas as tabs de conteúdo
             document.getElementById('scannerTab').classList.add('hidden');
             document.getElementById('historicoTab').classList.add('hidden');
             document.getElementById('configTab').classList.add('hidden');
-            
+
+            // Mostrar a tab selecionada
             document.getElementById(`${tab}Tab`).classList.remove('hidden');
-            
+
+            // Parar scanner se não estiver na tab scanner
             if (tab !== 'scanner') {
                 stopScanner();
             }
-            
+
+            // Atualizar histórico se necessário
             if (tab === 'historico') {
                 atualizarHistorico();
             }
         };
 
+        // Mostrar notificação
         function mostrarNotificacao(mensagem, tipo = 'info') {
             const notification = document.getElementById('notification');
             const icon = document.getElementById('notificationIcon');
             const message = document.getElementById('notificationMessage');
-            
+
             message.textContent = mensagem;
-            
-            icon.className = tipo === 'success' ? 'fas fa-check-circle' : 
-                           tipo === 'error' ? 'fas fa-times-circle' :
-                           tipo === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
-            
+
+            icon.className = tipo === 'success' ? 'fas fa-check-circle' :
+                tipo === 'error' ? 'fas fa-times-circle' :
+                    tipo === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
+
             notification.classList.remove('hidden');
-            
+
             setTimeout(() => {
                 notification.classList.add('hidden');
             }, 3000);
         }
 
+        // Formatar data
         function formatarData(data) {
             if (!data || data === '-') return '-';
             try {
-                // Se já estiver no formato dd/mm/aaaa
-                if (data.includes('/')) {
-                    return data;
-                }
-                // Se estiver no formato ISO aaaa-mm-dd
                 if (data.includes('-')) {
-                    const partes = data.split('T')[0].split('-');
-                    if (partes.length === 3) {
-                        return `${partes[2]}/${partes[1]}/${partes[0]}`;
-                    }
+                    const [ano, mes, dia] = data.split('T')[0].split('-');
+                    return `${dia}/${mes}/${ano}`;
                 }
                 return data;
             } catch {
@@ -1642,7 +1449,7 @@
             }
         }
 
-        // ================== INICIALIZAÇÃO ==================
+        // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
             carregarConfig();
             atualizarHistorico();
@@ -1650,4 +1457,5 @@
         });
     </script>
 </body>
+
 </html>
