@@ -846,7 +846,7 @@
                         <i class="fas fa-info-circle"></i> Sobre
                     </div>
                     <p style="color: #4A5B6E; font-size: 0.85rem; line-height: 1.5;">
-                        <strong>PCI Scanner v2.0</strong><br>
+                        <strong>PCI Scanner v2.1</strong><br>
                         Leitor de QR Code para extintores.<br>
                         Aponte a câmera para um QR Code para visualizar os dados completos.
                     </p>
@@ -1114,15 +1114,18 @@
             }
 
             try {
+                let etiquetaEncontrada = null;
+                let extintorEncontrado = null;
                 let clienteId = null;
                 let localInstalacao = '-';
-                let etiquetaId = extintorId;
+                let etiquetaId = extintorId; // O QR Code contém o ID da etiqueta
 
-                // 1. Se tiver tabela de etiquetas configurada, busca primeiro a etiqueta
+                // 1. Se tiver tabela de etiquetas configurada, busca a etiqueta pelo ID
                 if (baserowConfig.tables.etiquetas) {
                     try {
+                        // Buscar etiqueta pelo ID da etiqueta (o que está no QR Code)
                         const etiquetaResponse = await fetch(
-                            `${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&filters__Extintor__equal=${encodeURIComponent(extintorId)}`,
+                            `${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&filters__ID Etiqueta__equal=${encodeURIComponent(extintorId)}`,
                             {
                                 headers: {
                                     'Authorization': `Token ${baserowConfig.token}`,
@@ -1134,10 +1137,30 @@
                         if (etiquetaResponse.ok) {
                             const etiquetaResult = await etiquetaResponse.json();
                             if (etiquetaResult.results && etiquetaResult.results.length > 0) {
-                                const etiqueta = etiquetaResult.results[0];
-                                clienteId = etiqueta.Cliente || etiqueta.clienteId || etiqueta.cliente;
-                                localInstalacao = etiqueta['Local Instalação'] || etiqueta.localInstalacao || etiqueta.local || '-';
-                                etiquetaId = etiqueta['ID Etiqueta'] || etiqueta.id_etiqueta || etiqueta.etiquetaId || extintorId;
+                                etiquetaEncontrada = etiquetaResult.results[0];
+                                clienteId = etiquetaEncontrada.Cliente || etiquetaEncontrada.clienteId;
+                                localInstalacao = etiquetaEncontrada['Local Instalação'] || etiquetaEncontrada.localInstalacao || '-';
+                                etiquetaId = etiquetaEncontrada['ID Etiqueta'] || etiquetaEncontrada.id_etiqueta || etiquetaEncontrada.etiquetaId || extintorId;
+                                
+                                // 2. Se encontrou a etiqueta, buscar o extintor pelo número
+                                if (etiquetaEncontrada.Extintor) {
+                                    const extintorResponse = await fetch(
+                                        `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&filters__Nº Extintor__equal=${encodeURIComponent(etiquetaEncontrada.Extintor)}`,
+                                        {
+                                            headers: {
+                                                'Authorization': `Token ${baserowConfig.token}`,
+                                                'Content-Type': 'application/json'
+                                            }
+                                        }
+                                    );
+
+                                    if (extintorResponse.ok) {
+                                        const extintorResult = await extintorResponse.json();
+                                        if (extintorResult.results && extintorResult.results.length > 0) {
+                                            extintorEncontrado = extintorResult.results[0];
+                                        }
+                                    }
+                                }
                             }
                         }
                     } catch (e) {
@@ -1145,42 +1168,44 @@
                     }
                 }
 
-                // 2. Buscar o extintor pelo número
-                const response = await fetch(
-                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&filters__Nº_Extintor__equal=${encodeURIComponent(extintorId)}`,
-                    {
-                        headers: {
-                            'Authorization': `Token ${baserowConfig.token}`,
-                            'Content-Type': 'application/json'
+                // Se não encontrou pela etiqueta, tenta buscar direto como extintor
+                if (!extintorEncontrado) {
+                    const response = await fetch(
+                        `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&filters__Nº Extintor__equal=${encodeURIComponent(extintorId)}`,
+                        {
+                            headers: {
+                                'Authorization': `Token ${baserowConfig.token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        }
+                    );
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.results && data.results.length > 0) {
+                            extintorEncontrado = data.results[0];
                         }
                     }
-                );
-
-                if (!response.ok) {
-                    throw new Error('Erro ao consultar API de extintores');
                 }
 
-                const data = await response.json();
-
-                if (data.results && data.results.length > 0) {
-                    const extintor = data.results[0];
-
-                    // Mapeamento correto dos campos do Baserow
+                if (extintorEncontrado) {
+                    // Mapeamento correto dos campos do extintor
                     const resultado = {
-                        classe: extintor.Classe || extintor.classe || '-',
-                        tipo: extintor.Tipo || extintor.tipo || '-',
-                        carga: extintor.Kg || extintor.kg || extintor.Carga || extintor.carga || '-',
-                        validade: extintor['Data da Validade'] || extintor.validade || extintor.Validade || '-',
-                        recarga: extintor['Data da Recarga'] || extintor.recarga || extintor.Recarga || '-',
-                        clienteId: clienteId || extintor.Cliente || extintor.clienteId,
-                        clienteNome: null, // Será preenchido depois
+                        numeroExtintor: extintorEncontrado['Nº Extintor'] || extintorEncontrado.id || '-', // CORREÇÃO: Número do extintor
+                        classe: extintorEncontrado.Classe || extintorEncontrado.classe || '-',
+                        tipo: extintorEncontrado.Tipo || extintorEncontrado.tipo || '-',
+                        carga: extintorEncontrado.Kg || extintorEncontrado.kg || extintorEncontrado.Carga || extintorEncontrado.carga || '-',
+                        validade: extintorEncontrado['Data da Validade'] || extintorEncontrado.validade || extintorEncontrado.Validade || '-',
+                        recarga: extintorEncontrado['Data da Recarga'] || extintorEncontrado.recarga || extintorEncontrado.Recarga || '-',
+                        clienteId: clienteId,
+                        clienteNome: null,
                         local: localInstalacao,
                         etiquetaId: etiquetaId
                     };
 
-                    // 3. Buscar nome do cliente se tiver ID
-                    if (resultado.clienteId) {
-                        const clienteData = await buscarCliente(resultado.clienteId);
+                    // Buscar nome do cliente se tiver ID
+                    if (clienteId) {
+                        const clienteData = await buscarCliente(clienteId);
                         resultado.clienteNome = clienteData?.nome || 'N/I';
                     }
 
@@ -1249,16 +1274,16 @@
 
         // Processar QR Code lido
         async function handleQRCode(qrData) {
-            // O QR Code contém o ID do extintor (ex: "EXT001")
-            let extintorId = qrData.trim();
+            // O QR Code contém o ID da etiqueta (ex: "ETQ1773074915781")
+            let etiquetaId = qrData.trim();
 
-            if (!extintorId) {
+            if (!etiquetaId) {
                 mostrarNotificacao('❌ QR Code inválido', 'error');
                 return;
             }
 
-            ultimoQRCode = extintorId;
-            document.getElementById('qrIdDisplay').textContent = extintorId;
+            ultimoQRCode = etiquetaId;
+            document.getElementById('qrIdDisplay').textContent = etiquetaId;
             document.getElementById('qrResultCard').style.display = 'block';
             document.getElementById('loadingIndicator').style.display = 'flex';
 
@@ -1275,28 +1300,29 @@
             document.getElementById('extLocal').textContent = '-';
 
             try {
-                // Buscar dados do extintor
-                const extintorData = await buscarExtintor(extintorId);
+                // Buscar dados do extintor usando o ID da etiqueta
+                const extintorData = await buscarExtintor(etiquetaId);
 
                 if (extintorData) {
-                    document.getElementById('qrExtintorId').textContent = extintorId;
+                    // CORREÇÃO: Mostrar o número do extintor no campo "Extintor"
+                    document.getElementById('qrExtintorId').textContent = extintorData.numeroExtintor || etiquetaId;
 
                     // Preencher dados do extintor
+                    document.getElementById('extEtiquetaId').textContent = extintorData.etiquetaId || etiquetaId;
                     document.getElementById('extClasse').textContent = extintorData.classe || '-';
                     document.getElementById('extTipo').textContent = extintorData.tipo || '-';
                     document.getElementById('extKg').textContent = extintorData.carga || '-';
                     document.getElementById('extValidade').textContent = formatarData(extintorData.validade) || '-';
                     document.getElementById('extRecarga').textContent = formatarData(extintorData.recarga) || '-';
                     document.getElementById('extLocal').textContent = extintorData.local || '-';
-                    document.getElementById('extEtiquetaId').textContent = extintorData.etiquetaId || '-';
 
                     // Nome do cliente
                     document.getElementById('qrClienteNome').textContent = extintorData.clienteNome || 'N/I';
 
                     adicionarAoHistorico({
-                        id: extintorId,
+                        id: etiquetaId,
                         data: new Date().toLocaleString(),
-                        extintor: extintorId,
+                        extintor: extintorData.numeroExtintor || etiquetaId,
                         cliente: extintorData.clienteNome || 'N/I',
                         local: extintorData.local || '-'
                     });
