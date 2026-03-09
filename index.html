@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PCI Scanner - Leitor QR Code</title>
     <!-- Fontes e ícones -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -41,7 +39,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
         }
 
         .app-header {
@@ -51,13 +49,13 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .header-logo {
             width: 44px;
             height: 44px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255,255,255,0.15);
             border-radius: 14px;
             display: flex;
             align-items: center;
@@ -101,7 +99,7 @@
             padding: 20px;
             margin-bottom: 16px;
             box-shadow: 0 4px 12px rgba(0, 20, 40, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255,255,255,0.3);
         }
 
         .card-title {
@@ -156,9 +154,9 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            border: 3px solid rgba(255,255,255,0.3);
             border-radius: 24px;
-            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
         }
 
         .scanner-line {
@@ -170,17 +168,9 @@
         }
 
         @keyframes scan {
-            0% {
-                top: 0;
-            }
-
-            50% {
-                top: 100%;
-            }
-
-            100% {
-                top: 0;
-            }
+            0% { top: 0; }
+            50% { top: 100%; }
+            100% { top: 0; }
         }
 
         .btn-scanner {
@@ -230,7 +220,7 @@
             align-items: center;
             gap: 12px;
             padding: 8px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
         .qr-info-item:last-child {
@@ -312,7 +302,7 @@
             border-radius: 40px;
             padding: 4px;
             margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
 
         .tab {
@@ -404,7 +394,7 @@
             width: 30px;
             height: 30px;
             border-radius: 30px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255,255,255,0.9);
             border: none;
             display: flex;
             align-items: center;
@@ -478,9 +468,7 @@
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
 
         .app-footer {
@@ -498,7 +486,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0,0,0,0.5);
             backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
@@ -562,7 +550,7 @@
             background: white;
             border-radius: 30px;
             padding: 10px 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             z-index: 2000;
             display: flex;
             align-items: center;
@@ -572,15 +560,8 @@
         }
 
         @keyframes slideDown {
-            from {
-                top: -50px;
-                opacity: 0;
-            }
-
-            to {
-                top: 16px;
-                opacity: 1;
-            }
+            from { top: -50px; opacity: 0; }
+            to { top: 16px; opacity: 1; }
         }
 
         .config-section {
@@ -647,7 +628,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="app-container">
         <!-- Header -->
@@ -702,8 +682,7 @@
                 <button class="btn-scanner" onclick="startScanner()" id="startScannerBtn">
                     <i class="fas fa-play"></i> Iniciar Scanner
                 </button>
-                <button class="btn-scanner secondary" onclick="stopScanner()" id="stopScannerBtn"
-                    style="display: none;">
+                <button class="btn-scanner secondary" onclick="stopScanner()" id="stopScannerBtn" style="display: none;">
                     <i class="fas fa-stop"></i> Parar Scanner
                 </button>
 
@@ -812,18 +791,16 @@
                     <div class="config-section-title">
                         <i class="fas fa-database"></i> Conexão API
                     </div>
-
+                    
                     <div class="config-label">URL da API</div>
-                    <input type="text" class="config-input" id="baserowUrl" placeholder="https://api.exemplo.com/"
-                        value="https://api.baserow.io/api/">
-
+                    <input type="text" class="config-input" id="baserowUrl" placeholder="https://api.exemplo.com/" value="https://api.baserow.io/api/">
+                    
                     <div class="config-label">Token da Base</div>
                     <input type="password" class="config-input" id="baserowToken" placeholder="Token de autenticação">
-
+                    
                     <div class="config-label" style="margin-top: 8px;">ID Tabela Extintores</div>
-                    <input type="text" class="config-input" id="tableExtintores"
-                        placeholder="ID da tabela de extintores">
-
+                    <input type="text" class="config-input" id="tableExtintores" placeholder="ID da tabela de extintores">
+                    
                     <div class="config-label">ID Tabela Clientes</div>
                     <input type="text" class="config-input" id="tableClientes" placeholder="ID da tabela de clientes">
 
@@ -863,7 +840,7 @@
                 <i class="fas fa-camera"></i> Acesso à Câmera
             </div>
             <p style="color: #4A5B6E; margin-bottom: 16px;">
-                Para ler QR Codes, precisamos acessar sua câmera traseira.
+                Para ler QR Codes, precisamos acessar sua câmera traseira. 
                 Por favor, permita o acesso quando solicitado pelo navegador.
             </p>
             <div class="modal-buttons">
@@ -935,7 +912,7 @@
         }
 
         // Salvar configurações
-        window.salvarConfig = function () {
+        window.salvarConfig = function() {
             baserowConfig = {
                 url: document.getElementById('baserowUrl').value,
                 token: document.getElementById('baserowToken').value,
@@ -951,7 +928,7 @@
         };
 
         // Testar conexão com a API
-        window.testarConexao = async function () {
+        window.testarConexao = async function() {
             if (!baserowConfig.token) {
                 mostrarNotificacao('❌ Token não configurado', 'error');
                 return;
@@ -1006,7 +983,7 @@
             try {
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const cameras = devices.filter(d => d.kind === 'videoinput');
-
+                
                 if (cameras.length === 0) {
                     mostrarNotificacao('⚠️ Nenhuma câmera encontrada', 'warning');
                     document.getElementById('permissaoCameraCard').style.display = 'block';
@@ -1024,15 +1001,15 @@
         }
 
         // Solicitar permissão da câmera
-        window.solicitarPermissaoCamera = function () {
+        window.solicitarPermissaoCamera = function() {
             document.getElementById('modalPermissaoCamera').classList.remove('hidden');
         };
 
-        window.solicitarPermissaoCameraAgora = async function () {
+        window.solicitarPermissaoCameraAgora = async function() {
             fecharModalPermissao();
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'environment' }
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' } 
                 });
                 stream.getTracks().forEach(track => track.stop());
                 document.getElementById('permissaoCameraCard').style.display = 'none';
@@ -1042,12 +1019,12 @@
             }
         };
 
-        window.fecharModalPermissao = function () {
+        window.fecharModalPermissao = function() {
             document.getElementById('modalPermissaoCamera').classList.add('hidden');
         };
 
         // Iniciar scanner
-        window.startScanner = async function () {
+        window.startScanner = async function() {
             if (!baserowConfig.token || !baserowConfig.tables.extintores) {
                 mostrarNotificacao('⚠️ Configure a API primeiro', 'warning');
                 switchTab('config');
@@ -1076,9 +1053,9 @@
                     { facingMode: "environment" },
                     { fps: 10, qrbox: { width: 250, height: 250 } },
                     qrCodeSuccessCallback,
-                    () => { }
+                    () => {}
                 );
-
+                
                 isScanning = true;
                 document.getElementById('startScannerBtn').style.display = 'none';
                 document.getElementById('stopScannerBtn').style.display = 'block';
@@ -1090,7 +1067,7 @@
         };
 
         // Parar scanner
-        window.stopScanner = function () {
+        window.stopScanner = function() {
             if (html5QrcodeScanner && isScanning) {
                 html5QrcodeScanner.stop().then(() => {
                     isScanning = false;
@@ -1102,9 +1079,9 @@
 
         // Processar QR Code lido
         async function handleQRCode(qrData) {
-            // O QR Code contém o ID do extintor (ex: "EXT001")
+            // O QR Code contém o ID do extintor (ex: "PCI:ETQ1773015050753")
             let extintorId = qrData.trim();
-
+            
             if (!extintorId) {
                 mostrarNotificacao('❌ QR Code inválido', 'error');
                 return;
@@ -1114,9 +1091,9 @@
             document.getElementById('qrIdDisplay').textContent = extintorId;
             document.getElementById('qrResultCard').style.display = 'block';
             document.getElementById('loadingIndicator').style.display = 'flex';
-
-            document.getElementById('qrExtintorId').textContent = 'Consultando...';
-            document.getElementById('qrClienteNome').textContent = 'Aguarde...';
+            
+            document.getElementById('qrExtintorId').textContent = extintorId;
+            document.getElementById('qrClienteNome').textContent = 'Consultando...';
 
             // Limpar dados anteriores
             document.getElementById('extEtiquetaId').textContent = '-';
@@ -1130,31 +1107,27 @@
             try {
                 // Buscar dados do extintor
                 const extintorData = await buscarExtintor(extintorId);
-
+                
                 if (extintorData) {
-                    document.getElementById('qrExtintorId').textContent = extintorId;
-
                     // Preencher dados do extintor
                     document.getElementById('extClasse').textContent = extintorData.classe || '-';
                     document.getElementById('extTipo').textContent = extintorData.tipo || '-';
                     document.getElementById('extKg').textContent = extintorData.carga || '-';
                     document.getElementById('extValidade').textContent = formatarData(extintorData.validade) || '-';
                     document.getElementById('extRecarga').textContent = formatarData(extintorData.recarga) || '-';
-
-                    // Buscar dados do cliente se tiver ID
-                    if (extintorData.clienteId) {
+                    document.getElementById('extLocal').textContent = extintorData.local || '-';
+                    
+                    // ID da etiqueta (pode ser o mesmo código do QR ou um campo específico)
+                    document.getElementById('extEtiquetaId').textContent = extintorData.etiquetaId || extintorId;
+                    
+                    // Nome do cliente
+                    if (extintorData.clienteNome) {
+                        document.getElementById('qrClienteNome').textContent = extintorData.clienteNome;
+                    } else if (extintorData.clienteId) {
                         const clienteData = await buscarCliente(extintorData.clienteId);
                         document.getElementById('qrClienteNome').textContent = clienteData?.nome || 'N/I';
                     } else {
-                        document.getElementById('qrClienteNome').textContent = extintorData.clienteNome || 'N/I';
-                    }
-
-                    // Local
-                    document.getElementById('extLocal').textContent = extintorData.local || '-';
-
-                    // Se tiver ID da etiqueta nos dados
-                    if (extintorData.etiquetaId) {
-                        document.getElementById('extEtiquetaId').textContent = extintorData.etiquetaId;
+                        document.getElementById('qrClienteNome').textContent = 'N/I';
                     }
 
                     adicionarAoHistorico({
@@ -1167,13 +1140,11 @@
 
                     mostrarNotificacao('✅ Dados carregados!', 'success');
                 } else {
-                    document.getElementById('qrExtintorId').textContent = 'Não encontrado';
                     document.getElementById('qrClienteNome').textContent = 'Não encontrado';
                     mostrarNotificacao('⚠️ Extintor não encontrado', 'warning');
                 }
             } catch (error) {
                 console.error('Erro:', error);
-                document.getElementById('qrExtintorId').textContent = 'Erro';
                 document.getElementById('qrClienteNome').textContent = 'Erro na consulta';
                 mostrarNotificacao(`❌ Erro: ${error.message}`, 'error');
             } finally {
@@ -1188,37 +1159,81 @@
             }
 
             try {
-                // Tenta buscar pelo número do extintor
-                const response = await fetch(
-                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&filters__Nº_Extintor__equal=${encodeURIComponent(extintorId)}`,
-                    {
+                // Tentar diferentes nomes de campo para o ID do extintor
+                const camposId = [
+                    'Nº_Extintor',
+                    'Numero_Extintor',
+                    'ID_Extintor',
+                    'Codigo',
+                    'Etiqueta_ID',
+                    'ID_Etiqueta'
+                ];
+
+                let response = null;
+                let data = null;
+
+                // Tentar cada campo até encontrar resultados
+                for (const campo of camposId) {
+                    const url = `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&filters__${campo}__equal=${encodeURIComponent(extintorId)}`;
+                    
+                    response = await fetch(url, {
                         headers: {
                             'Authorization': `Token ${baserowConfig.token}`,
                             'Content-Type': 'application/json'
                         }
-                    }
-                );
+                    });
 
-                if (!response.ok) {
-                    throw new Error('Erro ao consultar API');
+                    if (response.ok) {
+                        data = await response.json();
+                        if (data.results && data.results.length > 0) {
+                            break;
+                        }
+                    }
                 }
 
-                const data = await response.json();
+                // Se não encontrou por campo específico, tenta buscar todos e filtrar
+                if (!data || !data.results || data.results.length === 0) {
+                    const url = `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&size=100`;
+                    response = await fetch(url, {
+                        headers: {
+                            'Authorization': `Token ${baserowConfig.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
 
-                if (data.results && data.results.length > 0) {
+                    if (response.ok) {
+                        data = await response.json();
+                        // Filtrar resultados que contenham o ID em qualquer campo
+                        if (data.results) {
+                            const encontrado = data.results.find(item => {
+                                return Object.values(item).some(val => 
+                                    String(val).includes(extintorId)
+                                );
+                            });
+                            if (encontrado) {
+                                data.results = [encontrado];
+                            }
+                        }
+                    }
+                }
+
+                if (data && data.results && data.results.length > 0) {
                     const extintor = data.results[0];
-
-                    // Extrair dados
+                    
+                    // Log para debug - mostra todos os campos retornados
+                    console.log('Campos do extintor:', Object.keys(extintor));
+                    
+                    // Mapeamento flexível de campos
                     return {
-                        classe: extintor.Classe || extintor.classe || '-',
-                        tipo: extintor.Tipo || extintor.tipo || '-',
-                        carga: extintor.Carga || extintor.carga || extintor.Kg || extintor.kg || '-',
-                        validade: extintor.Validade || extintor.validade || extintor['Data Validade'] || '-',
-                        recarga: extintor.Recarga || extintor.recarga || extintor['Última Recarga'] || '-',
-                        clienteId: extintor.Cliente || extintor.clienteId,
-                        clienteNome: extintor['Nome Cliente'] || extintor.clienteNome,
-                        local: extintor.Local || extintor.local || extintor['Local Instalação'] || '-',
-                        etiquetaId: extintor['ID Etiqueta'] || extintor.etiquetaId || extintor.ID_Etiqueta
+                        classe: extintor.Classe || extintor.classe || extintor.CLASSE || '-',
+                        tipo: extintor.Tipo || extintor.tipo || extintor.TIPO || extintor['Tipo de Extintor'] || '-',
+                        carga: extintor.Carga || extintor.carga || extintor.CARGA || extintor.Kg || extintor.kg || extintor.Peso || '-',
+                        validade: extintor.Validade || extintor.validade || extintor.VALIDADE || extintor['Data Validade'] || extintor['Data de Validade'] || '-',
+                        recarga: extintor.Recarga || extintor.recarga || extintor.RECARGA || extintor['Última Recarga'] || extintor['Data da Recarga'] || '-',
+                        clienteId: extintor.Cliente || extintor.clienteId || extintor.CLIENTE || extintor.ID_Cliente,
+                        clienteNome: extintor['Nome Cliente'] || extintor.clienteNome || extintor.CLIENTE_NOME || extintor.Cliente_Nome || '-',
+                        local: extintor.Local || extintor.local || extintor.LOCAL || extintor['Local Instalação'] || extintor['Localização'] || '-',
+                        etiquetaId: extintor['ID Etiqueta'] || extintor.etiquetaId || extintor.ID_Etiqueta || extintor.Etiqueta_ID || extintorId
                     };
                 }
 
@@ -1254,7 +1269,7 @@
                 if (response.ok) {
                     const cliente = await response.json();
                     return {
-                        nome: cliente.Nome || cliente.nome || cliente.Cliente || 'N/I'
+                        nome: cliente.Nome || cliente.nome || cliente.CLIENTE || cliente.Cliente || 'N/I'
                     };
                 }
 
@@ -1268,11 +1283,11 @@
         // Adicionar ao histórico
         function adicionarAoHistorico(item) {
             historicoLeituras.unshift(item);
-
+            
             if (historicoLeituras.length > 20) {
                 historicoLeituras = historicoLeituras.slice(0, 20);
             }
-
+            
             localStorage.setItem('historicoLeituras', JSON.stringify(historicoLeituras));
             atualizarHistorico();
         }
@@ -1297,10 +1312,10 @@
         }
 
         // Confirmar remoção de item
-        window.confirmarRemocao = function (index) {
+        window.confirmarRemocao = function(index) {
             itemParaRemover = index;
             document.getElementById('modalConfirmacaoMensagem').textContent = 'Tem certeza que deseja remover este item do histórico?';
-            document.getElementById('modalConfirmarBtn').onclick = function () {
+            document.getElementById('modalConfirmarBtn').onclick = function() {
                 if (itemParaRemover !== null) {
                     removerDoHistorico(itemParaRemover);
                     itemParaRemover = null;
@@ -1310,12 +1325,12 @@
         };
 
         // Confirmar limpar histórico
-        window.confirmarLimparHistorico = function () {
+        window.confirmarLimparHistorico = function() {
             if (historicoLeituras.length === 0) {
                 mostrarNotificacao('ℹ️ Histórico já está vazio', 'info');
                 return;
             }
-
+            
             itemParaRemover = null;
             document.getElementById('modalConfirmacaoMensagem').textContent = 'Tem certeza que deseja limpar todo o histórico?';
             document.getElementById('modalConfirmarBtn').onclick = limparHistorico;
@@ -1323,7 +1338,7 @@
         };
 
         // Fechar modal de confirmação
-        window.fecharModalConfirmacao = function () {
+        window.fecharModalConfirmacao = function() {
             document.getElementById('modalConfirmacao').classList.add('hidden');
             itemParaRemover = null;
         };
@@ -1331,7 +1346,7 @@
         // Atualizar lista de histórico
         function atualizarHistorico() {
             const lista = document.getElementById('historicoLista');
-
+            
             if (historicoLeituras.length === 0) {
                 lista.innerHTML = `
                     <div style="text-align: center; padding: 30px; color: #6B7A8F;">
@@ -1377,39 +1392,39 @@
         }
 
         // Limpar resultado atual
-        window.limparResultado = function () {
+        window.limparResultado = function() {
             document.getElementById('qrResultCard').style.display = 'none';
             ultimoQRCode = null;
         };
 
         // Consultar novamente
-        window.consultarNovamente = function () {
+        window.consultarNovamente = function() {
             if (ultimoQRCode) {
                 handleQRCode(ultimoQRCode);
             }
         };
 
         // Trocar entre tabs
-        window.switchTab = function (tab) {
+        window.switchTab = function(tab) {
             // Remover classe active de todas as tabs
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-
+            
             // Ativar a tab correta
             document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
-
+            
             // Esconder todas as tabs de conteúdo
             document.getElementById('scannerTab').classList.add('hidden');
             document.getElementById('historicoTab').classList.add('hidden');
             document.getElementById('configTab').classList.add('hidden');
-
+            
             // Mostrar a tab selecionada
             document.getElementById(`${tab}Tab`).classList.remove('hidden');
-
+            
             // Parar scanner se não estiver na tab scanner
             if (tab !== 'scanner') {
                 stopScanner();
             }
-
+            
             // Atualizar histórico se necessário
             if (tab === 'historico') {
                 atualizarHistorico();
@@ -1421,15 +1436,15 @@
             const notification = document.getElementById('notification');
             const icon = document.getElementById('notificationIcon');
             const message = document.getElementById('notificationMessage');
-
+            
             message.textContent = mensagem;
-
-            icon.className = tipo === 'success' ? 'fas fa-check-circle' :
-                tipo === 'error' ? 'fas fa-times-circle' :
-                    tipo === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
-
+            
+            icon.className = tipo === 'success' ? 'fas fa-check-circle' : 
+                           tipo === 'error' ? 'fas fa-times-circle' :
+                           tipo === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
+            
             notification.classList.remove('hidden');
-
+            
             setTimeout(() => {
                 notification.classList.add('hidden');
             }, 3000);
@@ -1457,5 +1472,4 @@
         });
     </script>
 </body>
-
 </html>
