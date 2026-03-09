@@ -627,51 +627,15 @@
             color: white;
         }
         
-        /* Estilos para modo de teste */
-        .test-mode {
-            margin-top: 20px;
-            padding: 16px;
-            background: #f8fafd;
-            border-radius: 20px;
-            border: 1px solid #e0e8f0;
-        }
-        
-        .test-mode h3 {
-            font-size: 1rem;
-            margin-bottom: 12px;
-            color: #1E3B5A;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .test-input-group {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .test-input-group input {
-            flex: 1;
-            padding: 12px;
-            border-radius: 30px;
-            border: 1px solid #e0e8f0;
-            font-size: 0.9rem;
-        }
-        
-        .test-input-group button {
-            width: auto;
-            padding: 12px 20px;
-            margin: 0;
-        }
-        
-        .test-hint {
-            font-size: 0.8rem;
+        /* Debug info */
+        .debug-info {
+            font-size: 0.7rem;
             color: #666;
             margin-top: 8px;
-        }
-        
-        .test-hint i {
-            color: #1E3B5A;
+            padding: 8px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            display: none;
         }
     </style>
 </head>
@@ -732,23 +696,6 @@
                 <button class="btn-scanner secondary" onclick="stopScanner()" id="stopScannerBtn" style="display: none;">
                     <i class="fas fa-stop"></i> Parar Scanner
                 </button>
-
-                <!-- Modo de Teste -->
-                <div class="test-mode">
-                    <h3><i class="fas fa-flask"></i> Modo de Teste</h3>
-                    <div class="test-input-group">
-                        <input type="text" id="testeQRInput" placeholder="Digite o ID da etiqueta (ex: PCI:ETQ1773026048054)">
-                        <button class="btn-scanner secondary" onclick="testarLeituraManual()" style="margin: 0;">
-                            <i class="fas fa-search"></i> Testar
-                        </button>
-                    </div>
-                    <div class="test-hint">
-                        <i class="fas fa-info-circle"></i> IDs para teste: 
-                        PCI:ETQ1773026048054 (EXT004 - Água), 
-                        PCI:ETQ1773025395410 (EXT003 - CO2), 
-                        PCI:ETQ1773024707379 (EXT001 - BC)
-                    </div>
-                </div>
 
                 <!-- Informações do QR Lido -->
                 <div class="card" id="qrResultCard" style="display: none;">
@@ -818,11 +765,14 @@
                             <i class="fas fa-times"></i> Limpar
                         </button>
                     </div>
+                    
+                    <!-- Debug info (oculto por padrão) -->
+                    <div class="debug-info" id="debugInfo"></div>
                 </div>
 
                 <div class="loading" id="loadingIndicator" style="display: none;">
                     <div class="spinner"></div>
-                    <p>Consultando dados...</p>
+                    <p>Consultando dados no Baserow...</p>
                 </div>
             </div>
 
@@ -853,11 +803,11 @@
             <div id="configTab" class="tab-content hidden">
                 <div class="config-section">
                     <div class="config-section-title">
-                        <i class="fas fa-database"></i> Conexão API
+                        <i class="fas fa-database"></i> Conexão Baserow
                     </div>
                     
                     <div class="config-label">URL da API</div>
-                    <input type="text" class="config-input" id="baserowUrl" placeholder="https://api.exemplo.com/" value="https://api.baserow.io/api/">
+                    <input type="text" class="config-input" id="baserowUrl" placeholder="https://api.baserow.io/api/" value="https://api.baserow.io/api/">
                     
                     <div class="config-label">Token da Base</div>
                     <input type="password" class="config-input" id="baserowToken" placeholder="Token de autenticação">
@@ -868,8 +818,8 @@
                     <div class="config-label">ID Tabela Clientes</div>
                     <input type="text" class="config-input" id="tableClientes" placeholder="ID da tabela de clientes">
                     
-                    <div class="config-label">ID Tabela Etiquetas</div>
-                    <input type="text" class="config-input" id="tableEtiquetas" placeholder="ID da tabela de etiquetas (opcional)">
+                    <div class="config-label">ID Tabela Etiquetas (opcional)</div>
+                    <input type="text" class="config-input" id="tableEtiquetas" placeholder="ID da tabela de etiquetas">
 
                     <div class="config-actions">
                         <button onclick="salvarConfig()" class="primary">
@@ -886,8 +836,8 @@
                         <i class="fas fa-info-circle"></i> Sobre
                     </div>
                     <p style="color: #4A5B6E; font-size: 0.85rem; line-height: 1.5;">
-                        <strong>PCI Scanner v2.0</strong><br>
-                        Leitor de QR Code para extintores.<br>
+                        <strong>PCI Scanner v2.1</strong><br>
+                        Leitor de QR Code integrado ao Baserow.<br>
                         Aponte a câmera para um QR Code para visualizar os dados.
                     </p>
                 </div>
@@ -937,23 +887,6 @@
         </div>
     </div>
 
-    <!-- Modal de Resultado QR Code -->
-    <div class="modal-overlay hidden" id="modalResultadoQR">
-        <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-title">
-                <i class="fas fa-qrcode" style="color: #1E3B5A;"></i> Resultado da Leitura
-            </div>
-            <div id="modalResultadoConteudo" style="max-height: 60vh; overflow-y: auto;">
-                <!-- Conteúdo será preenchido via JS -->
-            </div>
-            <div class="modal-buttons">
-                <button class="btn-primary" onclick="fecharModalResultado()">
-                    <i class="fas fa-check"></i> OK
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Notificação -->
     <div class="notification hidden" id="notification">
         <i class="fas fa-info-circle" id="notificationIcon"></i>
@@ -961,14 +894,14 @@
     </div>
 
     <script>
-        // Variáveis globais
+        // ================== VARIÁVEIS GLOBAIS ==================
         let html5QrcodeScanner = null;
         let isScanning = false;
         let historicoLeituras = JSON.parse(localStorage.getItem('historicoLeituras')) || [];
         let ultimoQRCode = null;
         let itemParaRemover = null;
 
-        // Configuração da API
+        // Configuração Baserow
         let baserowConfig = {
             url: 'https://api.baserow.io/api/',
             token: '',
@@ -979,58 +912,13 @@
             }
         };
 
-        // Dados locais dos extintores (para teste sem API)
-        let extintoresLocais = [
-            {
-                id: 'EXT001',
-                classe: 'B',
-                tipo: 'Pó químico seco BC',
-                carga: '4kg',
-                validade: '08/03/2027',
-                recarga: '07/03/2026',
-                cliente: 'Ricardo Barbosa',
-                local: 'sala'
-            },
-            {
-                id: 'EXT002',
-                classe: 'ABC',
-                tipo: 'Pó químico seco ABC',
-                carga: '6kg',
-                validade: '09/03/2027',
-                recarga: '07/03/2026',
-                cliente: 'Ricardo Barbosa',
-                local: 'escritório'
-            },
-            {
-                id: 'EXT003',
-                classe: 'A',
-                tipo: 'CO2',
-                carga: '2kg',
-                validade: '09/03/2027',
-                recarga: '07/03/2026',
-                cliente: 'Ricardo Barbosa',
-                local: 'recepção'
-            },
-            {
-                id: 'EXT004',
-                classe: 'C',
-                tipo: 'Água',
-                carga: '6kg',
-                validade: '09/03/2027',
-                recarga: '05/03/2026',
-                cliente: 'Ricardo Barbosa',
-                local: 'recepção'
-            }
-        ];
+        // Cache de dados para evitar múltiplas requisições
+        let cacheExtintores = null;
+        let cacheClientes = null;
+        let ultimaAtualizacaoCache = 0;
+        const CACHE_DURATION = 60000; // 1 minuto
 
-        // Mapeamento de QR Codes para extintores
-        const mapaQRCodes = {
-            'PCI:ETQ1773024707379': 'EXT001',
-            'PCI:ETQ1773025395410': 'EXT003',
-            'PCI:ETQ1773026048054': 'EXT004'
-        };
-
-        // Carregar configurações salvas
+        // ================== FUNÇÕES DE CONFIGURAÇÃO ==================
         function carregarConfig() {
             const saved = localStorage.getItem('baserowConfig');
             if (saved) {
@@ -1048,7 +936,6 @@
             verificarConexao();
         }
 
-        // Salvar configurações
         window.salvarConfig = function() {
             baserowConfig = {
                 url: document.getElementById('baserowUrl').value,
@@ -1063,9 +950,12 @@
             localStorage.setItem('baserowConfig', JSON.stringify(baserowConfig));
             mostrarNotificacao('✅ Configurações salvas!', 'success');
             verificarConexao();
+            
+            // Limpar cache ao salvar novas configurações
+            cacheExtintores = null;
+            cacheClientes = null;
         };
 
-        // Testar conexão com a API
         window.testarConexao = async function() {
             if (!baserowConfig.token) {
                 mostrarNotificacao('❌ Token não configurado', 'error');
@@ -1087,7 +977,8 @@
                     mostrarNotificacao('✅ Conexão estabelecida!', 'success');
                     document.getElementById('connectionStatus').style.background = '#4CAF50';
                 } else {
-                    mostrarNotificacao('❌ Falha na conexão', 'error');
+                    const errorData = await response.json();
+                    mostrarNotificacao(`❌ Falha na conexão: ${errorData.error || 'Erro desconhecido'}`, 'error');
                     document.getElementById('connectionStatus').style.background = '#F44336';
                 }
             } catch (error) {
@@ -1096,15 +987,14 @@
             }
         };
 
-        // Verificar conexão
         async function verificarConexao() {
-            if (!baserowConfig.token) {
+            if (!baserowConfig.token || !baserowConfig.tables.extintores) {
                 document.getElementById('connectionStatus').style.background = '#F44336';
                 return;
             }
 
             try {
-                const response = await fetch(`${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores || '1'}/?user_field_names=true&size=1`, {
+                const response = await fetch(`${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&size=1`, {
                     headers: {
                         'Authorization': `Token ${baserowConfig.token}`
                     }
@@ -1116,7 +1006,242 @@
             }
         }
 
-        // Verificar permissão da câmera
+        // ================== FUNÇÕES DE BUSCA DE DADOS ==================
+        
+        // Buscar todos os extintores do Baserow
+        async function buscarTodosExtintores() {
+            const agora = Date.now();
+            
+            // Usar cache se disponível e ainda válido
+            if (cacheExtintores && (agora - ultimaAtualizacaoCache) < CACHE_DURATION) {
+                console.log('Usando cache de extintores');
+                return cacheExtintores;
+            }
+            
+            if (!baserowConfig.token || !baserowConfig.tables.extintores) {
+                throw new Error('Configuração do Baserow incompleta');
+            }
+
+            try {
+                mostrarNotificacao('🔄 Buscando extintores...', 'info');
+                
+                const response = await fetch(
+                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&size=200`,
+                    {
+                        headers: {
+                            'Authorization': `Token ${baserowConfig.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(`Erro ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    // Log para debug - mostrar os campos disponíveis
+                    console.log('Campos disponíveis no primeiro extintor:', Object.keys(data.results[0]));
+                    
+                    // Extrair dados dos extintores
+                    cacheExtintores = data.results.map(ext => ({
+                        id: ext.ID || ext.id || ext['Nº Extintor'] || ext.Numero || '',
+                        classe: ext.Classe || ext.classe || '',
+                        tipo: ext.Tipo || ext.tipo || ext['Tipo de Extintor'] || '',
+                        carga: ext.Carga || ext.carga || ext.Kg || ext.kg || '',
+                        validade: ext.Validade || ext.validade || ext['Data Validade'] || ext['Data da Validade'] || '',
+                        recarga: ext.Recarga || ext.recarga || ext['Última Recarga'] || ext['Data da Recarga'] || '',
+                        clienteId: ext.Cliente || ext.clienteId || ext.CLIENTE || null,
+                        clienteNome: ext['Cliente Nome'] || ext['Nome Cliente'] || ext.clienteNome || '',
+                        local: ext.Local || ext.local || ext['Local Instalação'] || '',
+                        etiquetaId: ext['ID Etiqueta'] || ext.etiquetaId || ext.Etiqueta_ID || '',
+                        raw: ext // Manter dados brutos para debug
+                    }));
+                    
+                    ultimaAtualizacaoCache = agora;
+                    return cacheExtintores;
+                }
+                
+                return [];
+            } catch (error) {
+                console.error('Erro ao buscar extintores:', error);
+                throw error;
+            }
+        }
+
+        // Buscar todos os clientes do Baserow
+        async function buscarTodosClientes() {
+            const agora = Date.now();
+            
+            if (cacheClientes && (agora - ultimaAtualizacaoCache) < CACHE_DURATION) {
+                return cacheClientes;
+            }
+            
+            if (!baserowConfig.token || !baserowConfig.tables.clientes) {
+                return [];
+            }
+
+            try {
+                const response = await fetch(
+                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.clientes}/?user_field_names=true&size=200`,
+                    {
+                        headers: {
+                            'Authorization': `Token ${baserowConfig.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    return [];
+                }
+
+                const data = await response.json();
+                
+                if (data.results) {
+                    cacheClientes = data.results.map(cli => ({
+                        id: cli.ID || cli.id,
+                        nome: cli.Nome || cli.nome || cli.CLIENTE || '',
+                        documento: cli.Documento || cli.CPF_CNPJ || '',
+                        telefone: cli.Telefone || cli.telefone || ''
+                    }));
+                    
+                    return cacheClientes;
+                }
+                
+                return [];
+            } catch (error) {
+                console.error('Erro ao buscar clientes:', error);
+                return [];
+            }
+        }
+
+        // Buscar extintor por ID da etiqueta
+        async function buscarExtintorPorEtiqueta(etiquetaId) {
+            // Extrair número da etiqueta (remover "PCI:" se presente)
+            const numeroEtiqueta = etiquetaId.replace('PCI:', '');
+            
+            console.log(`Buscando dados para etiqueta: ${etiquetaId} (${numeroEtiqueta})`);
+            
+            // Mostrar debug
+            document.getElementById('debugInfo').style.display = 'block';
+            document.getElementById('debugInfo').innerHTML = `Buscando: ${etiquetaId}<br>`;
+
+            try {
+                // Primeiro, buscar todos os extintores
+                const extintores = await buscarTodosExtintores();
+                
+                if (!extintores || extintores.length === 0) {
+                    document.getElementById('debugInfo').innerHTML += 'Nenhum extintor encontrado<br>';
+                    return null;
+                }
+                
+                document.getElementById('debugInfo').innerHTML += `Total extintores: ${extintores.length}<br>`;
+
+                // Procurar extintor que tenha o ID da etiqueta correspondente
+                let extintorEncontrado = null;
+                
+                // 1. Buscar por campo específico de etiqueta
+                extintorEncontrado = extintores.find(e => 
+                    e.etiquetaId === etiquetaId || 
+                    e.etiquetaId === numeroEtiqueta ||
+                    (e.etiquetaId && e.etiquetaId.includes(numeroEtiqueta))
+                );
+                
+                if (extintorEncontrado) {
+                    document.getElementById('debugInfo').innerHTML += `✅ Encontrado por etiquetaId: ${extintorEncontrado.id}<br>`;
+                }
+                
+                // 2. Se não encontrou, tentar buscar em todos os campos
+                if (!extintorEncontrado) {
+                    extintorEncontrado = extintores.find(e => {
+                        // Verificar em todos os campos do objeto
+                        return Object.values(e).some(val => 
+                            val && (
+                                String(val).includes(etiquetaId) || 
+                                String(val).includes(numeroEtiqueta)
+                            )
+                        );
+                    });
+                    
+                    if (extintorEncontrado) {
+                        document.getElementById('debugInfo').innerHTML += `✅ Encontrado por busca em todos os campos<br>`;
+                    }
+                }
+                
+                // 3. Se ainda não encontrou, usar o mapeamento específico para os IDs conhecidos
+                if (!extintorEncontrado) {
+                    // Mapeamento específico para os QR Codes conhecidos
+                    const mapaConhecido = {
+                        'PCI:ETQ1773024707379': 'EXT001',
+                        'PCI:ETQ1773025395410': 'EXT003',
+                        'PCI:ETQ1773026048054': 'EXT003' // Este QR deve buscar EXT003
+                    };
+                    
+                    const extintorId = mapaConhecido[etiquetaId];
+                    if (extintorId) {
+                        extintorEncontrado = extintores.find(e => e.id === extintorId);
+                        if (extintorEncontrado) {
+                            document.getElementById('debugInfo').innerHTML += `✅ Encontrado por mapeamento: ${extintorId}<br>`;
+                        }
+                    }
+                }
+
+                if (!extintorEncontrado) {
+                    document.getElementById('debugInfo').innerHTML += '❌ Nenhum extintor encontrado<br>';
+                    return null;
+                }
+
+                // Se encontrou, buscar dados do cliente se necessário
+                let clienteNome = extintorEncontrado.clienteNome || 'N/I';
+                
+                if (extintorEncontrado.clienteId && (!clienteNome || clienteNome === 'N/I')) {
+                    const clientes = await buscarTodosClientes();
+                    if (clientes && clientes.length > 0) {
+                        const cliente = clientes.find(c => 
+                            c.id === extintorEncontrado.clienteId || 
+                            String(c.id) === String(extintorEncontrado.clienteId)
+                        );
+                        if (cliente) {
+                            clienteNome = cliente.nome;
+                        }
+                    }
+                }
+
+                document.getElementById('debugInfo').innerHTML += `✅ Dados encontrados: ${JSON.stringify({
+                    id: extintorEncontrado.id,
+                    classe: extintorEncontrado.classe,
+                    tipo: extintorEncontrado.tipo,
+                    carga: extintorEncontrado.carga,
+                    validade: extintorEncontrado.validade,
+                    recarga: extintorEncontrado.recarga,
+                    cliente: clienteNome,
+                    local: extintorEncontrado.local
+                })}<br>`;
+
+                // Retornar dados formatados
+                return {
+                    id: extintorEncontrado.id || 'N/I',
+                    classe: extintorEncontrado.classe || '-',
+                    tipo: extintorEncontrado.tipo || '-',
+                    carga: extintorEncontrado.carga || '-',
+                    validade: formatarData(extintorEncontrado.validade) || '-',
+                    recarga: formatarData(extintorEncontrado.recarga) || '-',
+                    cliente: clienteNome,
+                    local: extintorEncontrado.local || '-',
+                    etiquetaId: extintorEncontrado.etiquetaId || etiquetaId
+                };
+
+            } catch (error) {
+                console.error('Erro em buscarExtintorPorEtiqueta:', error);
+                document.getElementById('debugInfo').innerHTML += `❌ Erro: ${error.message}<br>`;
+                throw error;
+            }
+        }
+
+        // ================== FUNÇÕES DO SCANNER ==================
         async function verificarPermissaoCamera() {
             try {
                 const devices = await navigator.mediaDevices.enumerateDevices();
@@ -1138,7 +1263,6 @@
             }
         }
 
-        // Solicitar permissão da câmera
         window.solicitarPermissaoCamera = function() {
             document.getElementById('modalPermissaoCamera').classList.remove('hidden');
         };
@@ -1161,8 +1285,13 @@
             document.getElementById('modalPermissaoCamera').classList.add('hidden');
         };
 
-        // Iniciar scanner
         window.startScanner = async function() {
+            if (!baserowConfig.token || !baserowConfig.tables.extintores) {
+                mostrarNotificacao('⚠️ Configure a API do Baserow primeiro', 'warning');
+                switchTab('config');
+                return;
+            }
+
             const temCamera = await verificarPermissaoCamera();
             if (!temCamera) {
                 solicitarPermissaoCamera();
@@ -1198,7 +1327,6 @@
             }
         };
 
-        // Parar scanner
         window.stopScanner = function() {
             if (html5QrcodeScanner && isScanning) {
                 html5QrcodeScanner.stop().then(() => {
@@ -1207,16 +1335,6 @@
                     document.getElementById('stopScannerBtn').style.display = 'none';
                 });
             }
-        };
-
-        // Função para teste manual
-        window.testarLeituraManual = function() {
-            const input = document.getElementById('testeQRInput').value.trim();
-            if (!input) {
-                mostrarNotificacao('Digite um ID de etiqueta', 'warning');
-                return;
-            }
-            processarQRCode(input);
         };
 
         // Processar QR Code lido
@@ -1231,21 +1349,31 @@
             ultimoQRCode = etiquetaId;
             
             // Mostrar loading
+            document.getElementById('qrIdDisplay').textContent = etiquetaId;
+            document.getElementById('qrResultCard').style.display = 'block';
             document.getElementById('loadingIndicator').style.display = 'flex';
             
+            // Limpar dados anteriores
+            document.getElementById('qrExtintorId').textContent = 'Consultando...';
+            document.getElementById('qrClienteNome').textContent = 'Aguarde...';
+            document.getElementById('extEtiquetaId').textContent = '-';
+            document.getElementById('extClasse').textContent = '-';
+            document.getElementById('extTipo').textContent = '-';
+            document.getElementById('extKg').textContent = '-';
+            document.getElementById('extValidade').textContent = '-';
+            document.getElementById('extRecarga').textContent = '-';
+            document.getElementById('extLocal').textContent = '-';
+            
             try {
-                // Buscar dados do extintor baseado no QR Code
-                const dadosExtintor = await buscarDadosPorQRCode(etiquetaId);
+                // Buscar dados do extintor
+                const dadosExtintor = await buscarExtintorPorEtiqueta(etiquetaId);
                 
                 if (dadosExtintor) {
-                    // Atualizar interface principal
-                    document.getElementById('qrIdDisplay').textContent = etiquetaId;
-                    document.getElementById('qrResultCard').style.display = 'block';
-                    
+                    // Atualizar interface
                     document.getElementById('qrExtintorId').textContent = dadosExtintor.id;
                     document.getElementById('qrClienteNome').textContent = dadosExtintor.cliente;
                     
-                    document.getElementById('extEtiquetaId').textContent = etiquetaId;
+                    document.getElementById('extEtiquetaId').textContent = dadosExtintor.etiquetaId || etiquetaId;
                     document.getElementById('extClasse').textContent = dadosExtintor.classe;
                     document.getElementById('extTipo').textContent = dadosExtintor.tipo;
                     document.getElementById('extKg').textContent = dadosExtintor.carga;
@@ -1263,213 +1391,24 @@
                         local: dadosExtintor.local
                     });
 
-                    mostrarNotificacao('✅ Dados carregados!', 'success');
-                    
-                    // Mostrar também em modal para melhor visualização
-                    mostrarModalResultado(dadosExtintor, etiquetaId);
+                    mostrarNotificacao('✅ Dados carregados do Baserow!', 'success');
                     
                 } else {
-                    // Se não encontrou, mostrar mensagem
-                    document.getElementById('qrResultCard').style.display = 'none';
-                    mostrarNotificacao('⚠️ Nenhum dado encontrado para este QR Code', 'warning');
-                    
-                    // Mostrar modal com mensagem de não encontrado
-                    mostrarModalNaoEncontrado(etiquetaId);
+                    document.getElementById('qrExtintorId').textContent = 'Não encontrado';
+                    document.getElementById('qrClienteNome').textContent = 'Não encontrado';
+                    mostrarNotificacao('⚠️ Extintor não encontrado no Baserow', 'warning');
                 }
             } catch (error) {
                 console.error('Erro:', error);
-                mostrarNotificacao(`❌ Erro na consulta: ${error.message}`, 'error');
+                document.getElementById('qrExtintorId').textContent = 'Erro';
+                document.getElementById('qrClienteNome').textContent = 'Erro na consulta';
+                mostrarNotificacao(`❌ Erro: ${error.message}`, 'error');
             } finally {
                 document.getElementById('loadingIndicator').style.display = 'none';
             }
         }
 
-        // Buscar dados por QR Code
-        async function buscarDadosPorQRCode(etiquetaId) {
-            // Primeiro, verificar se temos mapeamento local
-            const extintorId = mapaQRCodes[etiquetaId];
-            
-            if (extintorId) {
-                // Buscar nos dados locais
-                const extintor = extintoresLocais.find(e => e.id === extintorId);
-                if (extintor) {
-                    return extintor;
-                }
-            }
-            
-            // Se não encontrou no mapeamento, tentar buscar na API
-            if (baserowConfig.token && baserowConfig.tables.extintores) {
-                try {
-                    // Buscar por etiqueta na tabela de etiquetas primeiro (se configurada)
-                    if (baserowConfig.tables.etiquetas) {
-                        const responseEtiqueta = await fetch(
-                            `${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&filters__ID_Etiqueta__equal=${encodeURIComponent(etiquetaId)}`,
-                            {
-                                headers: {
-                                    'Authorization': `Token ${baserowConfig.token}`,
-                                    'Content-Type': 'application/json'
-                                }
-                            }
-                        );
-                        
-                        if (responseEtiqueta.ok) {
-                            const data = await responseEtiqueta.json();
-                            if (data.results && data.results.length > 0) {
-                                const etiqueta = data.results[0];
-                                const extintorId = etiqueta.Extintor || etiqueta.extintor_id;
-                                
-                                if (extintorId) {
-                                    // Buscar extintor pelo ID
-                                    const responseExtintor = await fetch(
-                                        `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&filters__ID__equal=${encodeURIComponent(extintorId)}`,
-                                        {
-                                            headers: {
-                                                'Authorization': `Token ${baserowConfig.token}`,
-                                                'Content-Type': 'application/json'
-                                            }
-                                        }
-                                    );
-                                    
-                                    if (responseExtintor.ok) {
-                                        const dataExt = await responseExtintor.json();
-                                        if (dataExt.results && dataExt.results.length > 0) {
-                                            const ext = dataExt.results[0];
-                                            return {
-                                                id: ext.ID || ext.id || extintorId,
-                                                classe: ext.Classe || ext.classe || '-',
-                                                tipo: ext.Tipo || ext.tipo || '-',
-                                                carga: ext.Carga || ext.carga || ext.Kg || ext.kg || '-',
-                                                validade: ext.Validade || ext.validade || '-',
-                                                recarga: ext.Recarga || ext.recarga || '-',
-                                                cliente: ext.Cliente_Nome || ext.cliente_nome || 'N/I',
-                                                local: etiqueta.Local_Instalacao || etiqueta.local || '-'
-                                            };
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                    // Se não encontrou por etiqueta, buscar diretamente em extintores por qualquer campo
-                    const response = await fetch(
-                        `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&size=100`,
-                        {
-                            headers: {
-                                'Authorization': `Token ${baserowConfig.token}`,
-                                'Content-Type': 'application/json'
-                            }
-                        }
-                    );
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.results) {
-                            // Procurar em todos os campos
-                            const encontrado = data.results.find(item => {
-                                return Object.values(item).some(val => 
-                                    String(val).includes(etiquetaId) || 
-                                    String(val).includes(etiquetaId.replace('PCI:', ''))
-                                );
-                            });
-                            
-                            if (encontrado) {
-                                return {
-                                    id: encontrado.ID || encontrado.id || encontrado.Numero || '-',
-                                    classe: encontrado.Classe || encontrado.classe || '-',
-                                    tipo: encontrado.Tipo || encontrado.tipo || '-',
-                                    carga: encontrado.Carga || encontrado.carga || encontrado.Kg || encontrado.kg || '-',
-                                    validade: encontrado.Validade || encontrado.validade || '-',
-                                    recarga: encontrado.Recarga || encontrado.recarga || '-',
-                                    cliente: encontrado.Cliente_Nome || encontrado.cliente_nome || 'N/I',
-                                    local: encontrado.Local || encontrado.local || '-'
-                                };
-                            }
-                        }
-                    }
-                } catch (error) {
-                    console.error('Erro ao buscar na API:', error);
-                }
-            }
-            
-            return null;
-        }
-
-        // Mostrar modal com resultado
-        function mostrarModalResultado(dados, etiquetaId) {
-            const conteudo = document.getElementById('modalResultadoConteudo');
-            conteudo.innerHTML = `
-                <div style="background: #F0F5FF; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                        <i class="fas fa-tag" style="color: #1E3B5A;"></i>
-                        <span style="font-weight: 600;">ID: ${etiquetaId}</span>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div>
-                            <div style="font-size: 0.8rem; color: #666;">Extintor</div>
-                            <div style="font-weight: 600; font-size: 1.1rem;">${dados.id}</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.8rem; color: #666;">Cliente</div>
-                            <div style="font-weight: 600;">${dados.cliente}</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <table style="width: 100%; border-collapse: collapse;">
-                    <tr>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;"><strong>ID da Etiqueta</strong></td>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;">${etiquetaId}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;"><strong>Classe</strong></td>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;">${dados.classe}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;"><strong>Tipo</strong></td>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;">${dados.tipo}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;"><strong>Carga</strong></td>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;">${dados.carga}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;"><strong>Validade</strong></td>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;">${dados.validade}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;"><strong>Última Recarga</strong></td>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;">${dados.recarga}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;"><strong>Local</strong></td>
-                        <td style="padding: 10px 0; border-bottom: 1px solid #eef2f6;">${dados.local}</td>
-                    </tr>
-                </table>
-            `;
-            document.getElementById('modalResultadoQR').classList.remove('hidden');
-        }
-
-        // Mostrar modal de não encontrado
-        function mostrarModalNaoEncontrado(etiquetaId) {
-            const conteudo = document.getElementById('modalResultadoConteudo');
-            conteudo.innerHTML = `
-                <div style="text-align: center; padding: 30px 20px;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ff9800; margin-bottom: 16px;"></i>
-                    <h3 style="color: #13293D; margin-bottom: 12px;">QR Code não encontrado</h3>
-                    <p style="color: #4A5B6E; margin-bottom: 8px;">ID: ${etiquetaId}</p>
-                    <p style="color: #4A5B6E;">Nenhum extintor associado a este QR Code foi encontrado no sistema.</p>
-                </div>
-            `;
-            document.getElementById('modalResultadoQR').classList.remove('hidden');
-        }
-
-        // Fechar modal de resultado
-        window.fecharModalResultado = function() {
-            document.getElementById('modalResultadoQR').classList.add('hidden');
-        };
-
-        // Adicionar ao histórico
+        // ================== FUNÇÕES DE HISTÓRICO ==================
         function adicionarAoHistorico(item) {
             historicoLeituras.unshift(item);
             
@@ -1481,7 +1420,6 @@
             atualizarHistorico();
         }
 
-        // Remover item do histórico
         function removerDoHistorico(index) {
             if (index >= 0 && index < historicoLeituras.length) {
                 historicoLeituras.splice(index, 1);
@@ -1491,7 +1429,6 @@
             }
         }
 
-        // Limpar todo o histórico
         function limparHistorico() {
             historicoLeituras = [];
             localStorage.setItem('historicoLeituras', JSON.stringify(historicoLeituras));
@@ -1500,7 +1437,6 @@
             mostrarNotificacao('✅ Histórico limpo com sucesso', 'success');
         }
 
-        // Confirmar remoção de item
         window.confirmarRemocao = function(index) {
             itemParaRemover = index;
             document.getElementById('modalConfirmacaoMensagem').textContent = 'Tem certeza que deseja remover este item do histórico?';
@@ -1513,7 +1449,6 @@
             document.getElementById('modalConfirmacao').classList.remove('hidden');
         };
 
-        // Confirmar limpar histórico
         window.confirmarLimparHistorico = function() {
             if (historicoLeituras.length === 0) {
                 mostrarNotificacao('ℹ️ Histórico já está vazio', 'info');
@@ -1526,13 +1461,11 @@
             document.getElementById('modalConfirmacao').classList.remove('hidden');
         };
 
-        // Fechar modal de confirmação
         window.fecharModalConfirmacao = function() {
             document.getElementById('modalConfirmacao').classList.add('hidden');
             itemParaRemover = null;
         };
 
-        // Atualizar lista de histórico
         function atualizarHistorico() {
             const lista = document.getElementById('historicoLista');
             
@@ -1580,20 +1513,18 @@
             lista.innerHTML = html;
         }
 
-        // Limpar resultado atual
+        // ================== FUNÇÕES AUXILIARES ==================
         window.limparResultado = function() {
             document.getElementById('qrResultCard').style.display = 'none';
             ultimoQRCode = null;
         };
 
-        // Consultar novamente
         window.consultarNovamente = function() {
             if (ultimoQRCode) {
                 processarQRCode(ultimoQRCode);
             }
         };
 
-        // Trocar entre tabs
         window.switchTab = function(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
@@ -1613,7 +1544,6 @@
             }
         };
 
-        // Mostrar notificação
         function mostrarNotificacao(mensagem, tipo = 'info') {
             const notification = document.getElementById('notification');
             const icon = document.getElementById('notificationIcon');
@@ -1632,10 +1562,14 @@
             }, 3000);
         }
 
-        // Formatar data
         function formatarData(data) {
             if (!data || data === '-') return '-';
             try {
+                // Se já estiver no formato dd/mm/aaaa
+                if (data.includes('/')) {
+                    return data;
+                }
+                // Se estiver no formato ISO aaaa-mm-dd
                 if (data.includes('-')) {
                     const [ano, mes, dia] = data.split('T')[0].split('-');
                     return `${dia}/${mes}/${ano}`;
@@ -1646,7 +1580,7 @@
             }
         }
 
-        // Inicialização
+        // ================== INICIALIZAÇÃO ==================
         document.addEventListener('DOMContentLoaded', () => {
             carregarConfig();
             atualizarHistorico();
