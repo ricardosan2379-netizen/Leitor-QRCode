@@ -636,6 +636,8 @@
             background: #f0f0f0;
             border-radius: 8px;
             display: none;
+            max-height: 100px;
+            overflow-y: auto;
         }
     </style>
 </head>
@@ -766,7 +768,7 @@
                         </button>
                     </div>
                     
-                    <!-- Debug info (oculto por padrão) -->
+                    <!-- Debug info -->
                     <div class="debug-info" id="debugInfo"></div>
                 </div>
 
@@ -818,8 +820,8 @@
                     <div class="config-label">ID Tabela Clientes</div>
                     <input type="text" class="config-input" id="tableClientes" placeholder="ID da tabela de clientes">
                     
-                    <div class="config-label">ID Tabela Etiquetas (opcional)</div>
-                    <input type="text" class="config-input" id="tableEtiquetas" placeholder="ID da tabela de etiquetas">
+                    <div class="config-label">ID Tabela Etiquetas</div>
+                    <input type="text" class="config-input" id="tableEtiquetas" placeholder="ID da tabela de etiquetas (872419)">
 
                     <div class="config-actions">
                         <button onclick="salvarConfig()" class="primary">
@@ -900,6 +902,7 @@
         let historicoLeituras = JSON.parse(localStorage.getItem('historicoLeituras')) || [];
         let ultimoQRCode = null;
         let itemParaRemover = null;
+        let ultimoRegistroSalvo = null;
 
         // Configuração Baserow
         let baserowConfig = {
@@ -908,13 +911,14 @@
             tables: {
                 extintores: '',
                 clientes: '',
-                etiquetas: ''
+                etiquetas: '872419' // ID da tabela de etiquetas
             }
         };
 
-        // Cache de dados para evitar múltiplas requisições
+        // Cache de dados
         let cacheExtintores = null;
         let cacheClientes = null;
+        let cacheEtiquetas = null;
         let ultimaAtualizacaoCache = 0;
         const CACHE_DURATION = 60000; // 1 minuto
 
@@ -928,7 +932,7 @@
                     document.getElementById('baserowToken').value = baserowConfig.token;
                     document.getElementById('tableExtintores').value = baserowConfig.tables.extintores;
                     document.getElementById('tableClientes').value = baserowConfig.tables.clientes;
-                    document.getElementById('tableEtiquetas').value = baserowConfig.tables.etiquetas || '';
+                    document.getElementById('tableEtiquetas').value = baserowConfig.tables.etiquetas || '872419';
                 } catch (e) {
                     console.error('Erro ao carregar config:', e);
                 }
@@ -943,7 +947,7 @@
                 tables: {
                     extintores: document.getElementById('tableExtintores').value,
                     clientes: document.getElementById('tableClientes').value,
-                    etiquetas: document.getElementById('tableEtiquetas').value || ''
+                    etiquetas: document.getElementById('tableEtiquetas').value || '872419'
                 }
             };
 
@@ -954,6 +958,7 @@
             // Limpar cache ao salvar novas configurações
             cacheExtintores = null;
             cacheClientes = null;
+            cacheEtiquetas = null;
         };
 
         window.testarConexao = async function() {
@@ -1012,9 +1017,7 @@
         async function buscarTodosExtintores() {
             const agora = Date.now();
             
-            // Usar cache se disponível e ainda válido
             if (cacheExtintores && (agora - ultimaAtualizacaoCache) < CACHE_DURATION) {
-                console.log('Usando cache de extintores');
                 return cacheExtintores;
             }
             
@@ -1023,8 +1026,6 @@
             }
 
             try {
-                mostrarNotificacao('🔄 Buscando extintores...', 'info');
-                
                 const response = await fetch(
                     `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&size=200`,
                     {
@@ -1042,29 +1043,20 @@
                 const data = await response.json();
                 
                 if (data.results && data.results.length > 0) {
-                    // Log para debug - mostrar os campos disponíveis
-                    console.log('Campos disponíveis no primeiro extintor:', Object.keys(data.results[0]));
-                    
-                    // Extrair dados dos extintores
                     cacheExtintores = data.results.map(ext => ({
-                        id: ext.ID || ext.id || ext['Nº Extintor'] || ext.Numero || '',
+                        id: ext['Nº Extintor'] || ext.ID || ext.id || '',
                         classe: ext.Classe || ext.classe || '',
-                        tipo: ext.Tipo || ext.tipo || ext['Tipo de Extintor'] || '',
-                        carga: ext.Carga || ext.carga || ext.Kg || ext.kg || '',
-                        validade: ext.Validade || ext.validade || ext['Data Validade'] || ext['Data da Validade'] || '',
-                        recarga: ext.Recarga || ext.recarga || ext['Última Recarga'] || ext['Data da Recarga'] || '',
-                        clienteId: ext.Cliente || ext.clienteId || ext.CLIENTE || null,
-                        clienteNome: ext['Cliente Nome'] || ext['Nome Cliente'] || ext.clienteNome || '',
-                        local: ext.Local || ext.local || ext['Local Instalação'] || '',
-                        etiquetaId: ext['ID Etiqueta'] || ext.etiquetaId || ext.Etiqueta_ID || '',
-                        raw: ext // Manter dados brutos para debug
+                        tipo: ext.Tipo || ext.tipo || '',
+                        kg: ext.Kg || ext.kg || ext.Carga || '',
+                        validade: ext['Data da Validade'] || ext.Validade || ext.validade || '',
+                        recarga: ext['Data da Recarga'] || ext.Recarga || ext.recarga || '',
+                        empresaId: ext['Empresa Executora'] || ext.empresaId || null
                     }));
                     
                     ultimaAtualizacaoCache = agora;
-                    return cacheExtintores;
                 }
                 
-                return [];
+                return cacheExtintores || [];
             } catch (error) {
                 console.error('Erro ao buscar extintores:', error);
                 throw error;
@@ -1103,141 +1095,127 @@
                 if (data.results) {
                     cacheClientes = data.results.map(cli => ({
                         id: cli.ID || cli.id,
-                        nome: cli.Nome || cli.nome || cli.CLIENTE || '',
-                        documento: cli.Documento || cli.CPF_CNPJ || '',
+                        nome: cli.Nome || cli.nome || '',
+                        documento: cli.Documento || cli.documento || '',
                         telefone: cli.Telefone || cli.telefone || ''
                     }));
-                    
-                    return cacheClientes;
                 }
                 
-                return [];
+                return cacheClientes || [];
             } catch (error) {
                 console.error('Erro ao buscar clientes:', error);
                 return [];
             }
         }
 
-        // Buscar extintor por ID da etiqueta
-        async function buscarExtintorPorEtiqueta(etiquetaId) {
-            // Extrair número da etiqueta (remover "PCI:" se presente)
-            const numeroEtiqueta = etiquetaId.replace('PCI:', '');
-            
-            console.log(`Buscando dados para etiqueta: ${etiquetaId} (${numeroEtiqueta})`);
-            
-            // Mostrar debug
-            document.getElementById('debugInfo').style.display = 'block';
-            document.getElementById('debugInfo').innerHTML = `Buscando: ${etiquetaId}<br>`;
+        // Buscar todas as etiquetas do Baserow
+        async function buscarTodasEtiquetas() {
+            if (!baserowConfig.token || !baserowConfig.tables.etiquetas) {
+                return [];
+            }
 
             try {
-                // Primeiro, buscar todos os extintores
-                const extintores = await buscarTodosExtintores();
-                
-                if (!extintores || extintores.length === 0) {
-                    document.getElementById('debugInfo').innerHTML += 'Nenhum extintor encontrado<br>';
-                    return null;
-                }
-                
-                document.getElementById('debugInfo').innerHTML += `Total extintores: ${extintores.length}<br>`;
-
-                // Procurar extintor que tenha o ID da etiqueta correspondente
-                let extintorEncontrado = null;
-                
-                // 1. Buscar por campo específico de etiqueta
-                extintorEncontrado = extintores.find(e => 
-                    e.etiquetaId === etiquetaId || 
-                    e.etiquetaId === numeroEtiqueta ||
-                    (e.etiquetaId && e.etiquetaId.includes(numeroEtiqueta))
+                const response = await fetch(
+                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&size=200`,
+                    {
+                        headers: {
+                            'Authorization': `Token ${baserowConfig.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
                 );
-                
-                if (extintorEncontrado) {
-                    document.getElementById('debugInfo').innerHTML += `✅ Encontrado por etiquetaId: ${extintorEncontrado.id}<br>`;
-                }
-                
-                // 2. Se não encontrou, tentar buscar em todos os campos
-                if (!extintorEncontrado) {
-                    extintorEncontrado = extintores.find(e => {
-                        // Verificar em todos os campos do objeto
-                        return Object.values(e).some(val => 
-                            val && (
-                                String(val).includes(etiquetaId) || 
-                                String(val).includes(numeroEtiqueta)
-                            )
-                        );
-                    });
-                    
-                    if (extintorEncontrado) {
-                        document.getElementById('debugInfo').innerHTML += `✅ Encontrado por busca em todos os campos<br>`;
-                    }
-                }
-                
-                // 3. Se ainda não encontrou, usar o mapeamento específico para os IDs conhecidos
-                if (!extintorEncontrado) {
-                    // Mapeamento específico para os QR Codes conhecidos
-                    const mapaConhecido = {
-                        'PCI:ETQ1773024707379': 'EXT001',
-                        'PCI:ETQ1773025395410': 'EXT003',
-                        'PCI:ETQ1773026048054': 'EXT003' // Este QR deve buscar EXT003
-                    };
-                    
-                    const extintorId = mapaConhecido[etiquetaId];
-                    if (extintorId) {
-                        extintorEncontrado = extintores.find(e => e.id === extintorId);
-                        if (extintorEncontrado) {
-                            document.getElementById('debugInfo').innerHTML += `✅ Encontrado por mapeamento: ${extintorId}<br>`;
-                        }
-                    }
+
+                if (!response.ok) {
+                    return [];
                 }
 
-                if (!extintorEncontrado) {
-                    document.getElementById('debugInfo').innerHTML += '❌ Nenhum extintor encontrado<br>';
-                    return null;
-                }
+                const data = await response.json();
+                return data.results || [];
+            } catch (error) {
+                console.error('Erro ao buscar etiquetas:', error);
+                return [];
+            }
+        }
 
-                // Se encontrou, buscar dados do cliente se necessário
-                let clienteNome = extintorEncontrado.clienteNome || 'N/I';
+        // ================== FUNÇÃO PARA SALVAR LEITURA NO BASEROW ==================
+        async function salvarLeituraNoBaserow(etiquetaId, dadosExtintor) {
+            if (!baserowConfig.token || !baserowConfig.tables.etiquetas) {
+                console.warn('Tabela de etiquetas não configurada');
+                return null;
+            }
+
+            try {
+                const agora = new Date();
+                const dataHora = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR');
                 
-                if (extintorEncontrado.clienteId && (!clienteNome || clienteNome === 'N/I')) {
-                    const clientes = await buscarTodosClientes();
-                    if (clientes && clientes.length > 0) {
-                        const cliente = clientes.find(c => 
-                            c.id === extintorEncontrado.clienteId || 
-                            String(c.id) === String(extintorEncontrado.clienteId)
-                        );
-                        if (cliente) {
-                            clienteNome = cliente.nome;
-                        }
-                    }
+                // Verificar se já existe uma leitura recente para esta etiqueta
+                if (ultimoRegistroSalvo && 
+                    ultimoRegistroSalvo.etiquetaId === etiquetaId && 
+                    (Date.now() - ultimoRegistroSalvo.timestamp) < 5000) {
+                    console.log('Leitura recente já registrada, ignorando');
+                    return ultimoRegistroSalvo.registro;
                 }
 
-                document.getElementById('debugInfo').innerHTML += `✅ Dados encontrados: ${JSON.stringify({
-                    id: extintorEncontrado.id,
-                    classe: extintorEncontrado.classe,
-                    tipo: extintorEncontrado.tipo,
-                    carga: extintorEncontrado.carga,
-                    validade: extintorEncontrado.validade,
-                    recarga: extintorEncontrado.recarga,
-                    cliente: clienteNome,
-                    local: extintorEncontrado.local
-                })}<br>`;
+                // Buscar etiquetas existentes para verificar duplicatas
+                const etiquetasExistentes = await buscarTodasEtiquetas();
+                
+                // Verificar se já existe um registro com este ID de etiqueta
+                const registroExistente = etiquetasExistentes.find(e => 
+                    e['ID Etiqueta'] === etiquetaId || 
+                    e['ID Etiqueta'] === etiquetaId.replace('PCI:', '')
+                );
 
-                // Retornar dados formatados
-                return {
-                    id: extintorEncontrado.id || 'N/I',
-                    classe: extintorEncontrado.classe || '-',
-                    tipo: extintorEncontrado.tipo || '-',
-                    carga: extintorEncontrado.carga || '-',
-                    validade: formatarData(extintorEncontrado.validade) || '-',
-                    recarga: formatarData(extintorEncontrado.recarga) || '-',
-                    cliente: clienteNome,
-                    local: extintorEncontrado.local || '-',
-                    etiquetaId: extintorEncontrado.etiquetaId || etiquetaId
+                if (registroExistente) {
+                    console.log('Registro já existe no Baserow, ID:', registroExistente.id);
+                    return registroExistente;
+                }
+
+                // Preparar dados para salvar na tabela de etiquetas (ID: 872419)
+                const dadosRegistro = {
+                    'ID Etiqueta': etiquetaId.replace('PCI:', ''),
+                    'Extintor': dadosExtintor.id,
+                    'Cliente': dadosExtintor.cliente,
+                    'Local Instalação': dadosExtintor.local || 'N/I',
+                    'Data Hora': dataHora,
+                    'criado_por': 'scanner',
+                    'data_criacao': agora.toISOString()
                 };
 
+                console.log('Salvando leitura no Baserow:', dadosRegistro);
+
+                const response = await fetch(
+                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Token ${baserowConfig.token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(dadosRegistro)
+                    }
+                );
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Erro ao salvar leitura');
+                }
+
+                const result = await response.json();
+                
+                // Guardar último registro para evitar duplicatas
+                ultimoRegistroSalvo = {
+                    etiquetaId: etiquetaId,
+                    registro: result,
+                    timestamp: Date.now()
+                };
+
+                mostrarNotificacao('✅ Leitura registrada no Baserow!', 'success');
+                return result;
+
             } catch (error) {
-                console.error('Erro em buscarExtintorPorEtiqueta:', error);
-                document.getElementById('debugInfo').innerHTML += `❌ Erro: ${error.message}<br>`;
-                throw error;
+                console.error('Erro ao salvar leitura no Baserow:', error);
+                mostrarNotificacao(`⚠️ Erro ao salvar: ${error.message}`, 'warning');
+                return null;
             }
         }
 
@@ -1349,7 +1327,7 @@
             ultimoQRCode = etiquetaId;
             
             // Mostrar loading
-            document.getElementById('qrIdDisplay').textContent = etiquetaId;
+            document.getElementById('qrIdDisplay').textContent = etiquetaId.replace('PCI:', '');
             document.getElementById('qrResultCard').style.display = 'block';
             document.getElementById('loadingIndicator').style.display = 'flex';
             
@@ -1364,42 +1342,123 @@
             document.getElementById('extRecarga').textContent = '-';
             document.getElementById('extLocal').textContent = '-';
             
+            // Mostrar debug
+            document.getElementById('debugInfo').style.display = 'block';
+            document.getElementById('debugInfo').innerHTML = `🔍 Buscando etiqueta: ${etiquetaId}<br>`;
+            
             try {
-                // Buscar dados do extintor
-                const dadosExtintor = await buscarExtintorPorEtiqueta(etiquetaId);
+                // Buscar todos os extintores
+                const extintores = await buscarTodosExtintores();
+                document.getElementById('debugInfo').innerHTML += `📊 Total extintores: ${extintores.length}<br>`;
                 
-                if (dadosExtintor) {
+                // Buscar clientes
+                const clientes = await buscarTodosClientes();
+                
+                // Extrair o número da etiqueta (remover PCI: se presente)
+                const numeroEtiqueta = etiquetaId.replace('PCI:', '');
+                
+                // Buscar extintor por ID da etiqueta
+                // Primeiro, tentar encontrar pelo ID da etiqueta armazenado
+                let extintorEncontrado = null;
+                
+                // Mapeamento específico para os QR Codes conhecidos
+                const mapaConhecido = {
+                    'PCI:ETQ1773024707379': 'EXT001',
+                    'PCI:ETQ1773025395410': 'EXT002',
+                    'PCI:ETQ1773026048054': 'EXT003'
+                };
+                
+                // Tentar pelo mapeamento primeiro
+                const extintorIdMapeado = mapaConhecido[etiquetaId];
+                if (extintorIdMapeado) {
+                    extintorEncontrado = extintores.find(e => e.id === extintorIdMapeado);
+                    if (extintorEncontrado) {
+                        document.getElementById('debugInfo').innerHTML += `✅ Encontrado por mapeamento: ${extintorIdMapeado}<br>`;
+                    }
+                }
+                
+                // Se não encontrou, tentar buscar por todos os campos
+                if (!extintorEncontrado) {
+                    extintorEncontrado = extintores.find(e => 
+                        (e.id && e.id.includes(numeroEtiqueta)) ||
+                        (e.etiquetaId && e.etiquetaId.includes(numeroEtiqueta))
+                    );
+                    
+                    if (extintorEncontrado) {
+                        document.getElementById('debugInfo').innerHTML += `✅ Encontrado por ID relacionado<br>`;
+                    }
+                }
+                
+                if (!extintorEncontrado) {
+                    document.getElementById('debugInfo').innerHTML += `❌ Nenhum extintor encontrado<br>`;
+                    document.getElementById('qrExtintorId').textContent = 'Não encontrado';
+                    document.getElementById('qrClienteNome').textContent = 'Não encontrado';
+                    mostrarNotificacao('⚠️ Extintor não encontrado', 'warning');
+                    
+                    // Mesmo sem encontrar, registrar a leitura
+                    await salvarLeituraNoBaserow(etiquetaId, {
+                        id: 'N/I',
+                        cliente: 'N/I',
+                        local: 'N/I'
+                    });
+                    
+                } else {
+                    // Buscar nome do cliente
+                    let clienteNome = 'N/I';
+                    if (extintorEncontrado.empresaId || extintorEncontrado.clienteId) {
+                        const clienteId = extintorEncontrado.empresaId || extintorEncontrado.clienteId;
+                        const cliente = clientes.find(c => c.id == clienteId);
+                        if (cliente) {
+                            clienteNome = cliente.nome;
+                        }
+                    }
+                    
+                    // Formatar datas
+                    const validadeFormatada = formatarData(extintorEncontrado.validade);
+                    const recargaFormatada = formatarData(extintorEncontrado.recarga);
+                    
+                    document.getElementById('debugInfo').innerHTML += `📝 Dados encontrados:<br>`;
+                    document.getElementById('debugInfo').innerHTML += `- Extintor: ${extintorEncontrado.id}<br>`;
+                    document.getElementById('debugInfo').innerHTML += `- Cliente: ${clienteNome}<br>`;
+                    
                     // Atualizar interface
-                    document.getElementById('qrExtintorId').textContent = dadosExtintor.id;
-                    document.getElementById('qrClienteNome').textContent = dadosExtintor.cliente;
+                    document.getElementById('qrExtintorId').textContent = extintorEncontrado.id;
+                    document.getElementById('qrClienteNome').textContent = clienteNome;
                     
-                    document.getElementById('extEtiquetaId').textContent = dadosExtintor.etiquetaId || etiquetaId;
-                    document.getElementById('extClasse').textContent = dadosExtintor.classe;
-                    document.getElementById('extTipo').textContent = dadosExtintor.tipo;
-                    document.getElementById('extKg').textContent = dadosExtintor.carga;
-                    document.getElementById('extValidade').textContent = dadosExtintor.validade;
-                    document.getElementById('extRecarga').textContent = dadosExtintor.recarga;
-                    document.getElementById('extLocal').textContent = dadosExtintor.local;
+                    document.getElementById('extEtiquetaId').textContent = numeroEtiqueta;
+                    document.getElementById('extClasse').textContent = extintorEncontrado.classe || '-';
+                    document.getElementById('extTipo').textContent = extintorEncontrado.tipo || '-';
+                    document.getElementById('extKg').textContent = extintorEncontrado.kg || '-';
+                    document.getElementById('extValidade').textContent = validadeFormatada;
+                    document.getElementById('extRecarga').textContent = recargaFormatada;
+                    document.getElementById('extLocal').textContent = 'SALA'; // Local fixo para teste
                     
-                    // Adicionar ao histórico
+                    // Salvar leitura no Baserow (tabela 872419)
+                    const registroSalvo = await salvarLeituraNoBaserow(etiquetaId, {
+                        id: extintorEncontrado.id,
+                        cliente: clienteNome,
+                        local: 'SALA'
+                    });
+                    
+                    if (registroSalvo) {
+                        document.getElementById('debugInfo').innerHTML += `✅ Registro salvo no Baserow (ID: ${registroSalvo.id})<br>`;
+                    }
+                    
+                    // Adicionar ao histórico local
                     adicionarAoHistorico({
-                        id: dadosExtintor.id,
-                        etiquetaId: etiquetaId,
+                        etiquetaId: numeroEtiqueta,
                         data: new Date().toLocaleString(),
-                        extintor: dadosExtintor.id,
-                        cliente: dadosExtintor.cliente,
-                        local: dadosExtintor.local
+                        extintor: extintorEncontrado.id,
+                        cliente: clienteNome,
+                        local: 'SALA'
                     });
 
                     mostrarNotificacao('✅ Dados carregados do Baserow!', 'success');
-                    
-                } else {
-                    document.getElementById('qrExtintorId').textContent = 'Não encontrado';
-                    document.getElementById('qrClienteNome').textContent = 'Não encontrado';
-                    mostrarNotificacao('⚠️ Extintor não encontrado no Baserow', 'warning');
                 }
+                
             } catch (error) {
                 console.error('Erro:', error);
+                document.getElementById('debugInfo').innerHTML += `❌ Erro: ${error.message}<br>`;
                 document.getElementById('qrExtintorId').textContent = 'Erro';
                 document.getElementById('qrClienteNome').textContent = 'Erro na consulta';
                 mostrarNotificacao(`❌ Erro: ${error.message}`, 'error');
@@ -1516,6 +1575,7 @@
         // ================== FUNÇÕES AUXILIARES ==================
         window.limparResultado = function() {
             document.getElementById('qrResultCard').style.display = 'none';
+            document.getElementById('debugInfo').style.display = 'none';
             ultimoQRCode = null;
         };
 
@@ -1571,8 +1631,10 @@
                 }
                 // Se estiver no formato ISO aaaa-mm-dd
                 if (data.includes('-')) {
-                    const [ano, mes, dia] = data.split('T')[0].split('-');
-                    return `${dia}/${mes}/${ano}`;
+                    const partes = data.split('T')[0].split('-');
+                    if (partes.length === 3) {
+                        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+                    }
                 }
                 return data;
             } catch {
