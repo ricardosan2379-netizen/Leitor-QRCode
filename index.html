@@ -827,6 +827,10 @@
                     <div class="config-label">ID Tabela Clientes</div>
                     <input type="text" class="config-input" id="tableClientes" placeholder="ID da tabela de clientes">
 
+                    <!-- NOVO CAMPO: ID Tabela Etiquetas -->
+                    <div class="config-label">ID Tabela Etiquetas</div>
+                    <input type="text" class="config-input" id="tableEtiquetas" placeholder="ID da tabela de etiquetas">
+
                     <div class="config-actions">
                         <button onclick="salvarConfig()" class="primary">
                             <i class="fas fa-save"></i> Salvar
@@ -842,9 +846,9 @@
                         <i class="fas fa-info-circle"></i> Sobre
                     </div>
                     <p style="color: #4A5B6E; font-size: 0.85rem; line-height: 1.5;">
-                        <strong>PCI Scanner v1.2</strong><br>
+                        <strong>PCI Scanner v2.0</strong><br>
                         Leitor de QR Code para extintores.<br>
-                        Aponte a câmera para um QR Code para visualizar os dados.
+                        Aponte a câmera para um QR Code para visualizar os dados completos.
                     </p>
                 </div>
             </div>
@@ -913,7 +917,8 @@
             token: '',
             tables: {
                 extintores: '',
-                clientes: ''
+                clientes: '',
+                etiquetas: '' // NOVO: tabela de etiquetas
             }
         };
 
@@ -927,6 +932,7 @@
                     document.getElementById('baserowToken').value = baserowConfig.token;
                     document.getElementById('tableExtintores').value = baserowConfig.tables.extintores;
                     document.getElementById('tableClientes').value = baserowConfig.tables.clientes;
+                    document.getElementById('tableEtiquetas').value = baserowConfig.tables.etiquetas || '';
                 } catch (e) {
                     console.error('Erro ao carregar config:', e);
                 }
@@ -941,7 +947,8 @@
                 token: document.getElementById('baserowToken').value,
                 tables: {
                     extintores: document.getElementById('tableExtintores').value,
-                    clientes: document.getElementById('tableClientes').value
+                    clientes: document.getElementById('tableClientes').value,
+                    etiquetas: document.getElementById('tableEtiquetas').value
                 }
             };
 
@@ -1100,6 +1107,146 @@
             }
         };
 
+        // ================== FUNÇÃO CORRIGIDA: BUSCAR EXTINTOR ==================
+        async function buscarExtintor(extintorId) {
+            if (!baserowConfig.token || !baserowConfig.tables.extintores) {
+                throw new Error('Configuração da API incompleta');
+            }
+
+            try {
+                let clienteId = null;
+                let localInstalacao = '-';
+                let etiquetaId = extintorId;
+
+                // 1. Se tiver tabela de etiquetas configurada, busca primeiro a etiqueta
+                if (baserowConfig.tables.etiquetas) {
+                    try {
+                        const etiquetaResponse = await fetch(
+                            `${baserowConfig.url}database/rows/table/${baserowConfig.tables.etiquetas}/?user_field_names=true&filters__Extintor__equal=${encodeURIComponent(extintorId)}`,
+                            {
+                                headers: {
+                                    'Authorization': `Token ${baserowConfig.token}`,
+                                    'Content-Type': 'application/json'
+                                }
+                            }
+                        );
+
+                        if (etiquetaResponse.ok) {
+                            const etiquetaResult = await etiquetaResponse.json();
+                            if (etiquetaResult.results && etiquetaResult.results.length > 0) {
+                                const etiqueta = etiquetaResult.results[0];
+                                clienteId = etiqueta.Cliente || etiqueta.clienteId || etiqueta.cliente;
+                                localInstalacao = etiqueta['Local Instalação'] || etiqueta.localInstalacao || etiqueta.local || '-';
+                                etiquetaId = etiqueta['ID Etiqueta'] || etiqueta.id_etiqueta || etiqueta.etiquetaId || extintorId;
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('Erro ao buscar etiqueta:', e);
+                    }
+                }
+
+                // 2. Buscar o extintor pelo número
+                const response = await fetch(
+                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&filters__Nº_Extintor__equal=${encodeURIComponent(extintorId)}`,
+                    {
+                        headers: {
+                            'Authorization': `Token ${baserowConfig.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error('Erro ao consultar API de extintores');
+                }
+
+                const data = await response.json();
+
+                if (data.results && data.results.length > 0) {
+                    const extintor = data.results[0];
+
+                    // Mapeamento correto dos campos do Baserow
+                    const resultado = {
+                        classe: extintor.Classe || extintor.classe || '-',
+                        tipo: extintor.Tipo || extintor.tipo || '-',
+                        carga: extintor.Kg || extintor.kg || extintor.Carga || extintor.carga || '-',
+                        validade: extintor['Data da Validade'] || extintor.validade || extintor.Validade || '-',
+                        recarga: extintor['Data da Recarga'] || extintor.recarga || extintor.Recarga || '-',
+                        clienteId: clienteId || extintor.Cliente || extintor.clienteId,
+                        clienteNome: null, // Será preenchido depois
+                        local: localInstalacao,
+                        etiquetaId: etiquetaId
+                    };
+
+                    // 3. Buscar nome do cliente se tiver ID
+                    if (resultado.clienteId) {
+                        const clienteData = await buscarCliente(resultado.clienteId);
+                        resultado.clienteNome = clienteData?.nome || 'N/I';
+                    }
+
+                    return resultado;
+                }
+
+                return null;
+            } catch (error) {
+                console.error('Erro em buscarExtintor:', error);
+                throw error;
+            }
+        }
+
+        // ================== FUNÇÃO CORRIGIDA: BUSCAR CLIENTE ==================
+        async function buscarCliente(clienteId) {
+            if (!baserowConfig.token || !baserowConfig.tables.clientes || !clienteId) {
+                return null;
+            }
+
+            try {
+                // Tenta buscar por ID direto
+                const response = await fetch(
+                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.clientes}/${clienteId}/?user_field_names=true`,
+                    {
+                        headers: {
+                            'Authorization': `Token ${baserowConfig.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (response.ok) {
+                    const cliente = await response.json();
+                    return {
+                        nome: cliente.Nome || cliente.nome || cliente.Cliente || 'N/I'
+                    };
+                }
+
+                // Se falhar, tenta buscar com filtro
+                const filterResponse = await fetch(
+                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.clientes}/?user_field_names=true&filters__id__equal=${clienteId}`,
+                    {
+                        headers: {
+                            'Authorization': `Token ${baserowConfig.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (filterResponse.ok) {
+                    const filterData = await filterResponse.json();
+                    if (filterData.results && filterData.results.length > 0) {
+                        const cliente = filterData.results[0];
+                        return {
+                            nome: cliente.Nome || cliente.nome || cliente.Cliente || 'N/I'
+                        };
+                    }
+                }
+
+                return null;
+            } catch (error) {
+                console.error('Erro em buscarCliente:', error);
+                return null;
+            }
+        }
+
         // Processar QR Code lido
         async function handleQRCode(qrData) {
             // O QR Code contém o ID do extintor (ex: "EXT001")
@@ -1140,28 +1287,17 @@
                     document.getElementById('extKg').textContent = extintorData.carga || '-';
                     document.getElementById('extValidade').textContent = formatarData(extintorData.validade) || '-';
                     document.getElementById('extRecarga').textContent = formatarData(extintorData.recarga) || '-';
-
-                    // Buscar dados do cliente se tiver ID
-                    if (extintorData.clienteId) {
-                        const clienteData = await buscarCliente(extintorData.clienteId);
-                        document.getElementById('qrClienteNome').textContent = clienteData?.nome || 'N/I';
-                    } else {
-                        document.getElementById('qrClienteNome').textContent = extintorData.clienteNome || 'N/I';
-                    }
-
-                    // Local
                     document.getElementById('extLocal').textContent = extintorData.local || '-';
+                    document.getElementById('extEtiquetaId').textContent = extintorData.etiquetaId || '-';
 
-                    // Se tiver ID da etiqueta nos dados
-                    if (extintorData.etiquetaId) {
-                        document.getElementById('extEtiquetaId').textContent = extintorData.etiquetaId;
-                    }
+                    // Nome do cliente
+                    document.getElementById('qrClienteNome').textContent = extintorData.clienteNome || 'N/I';
 
                     adicionarAoHistorico({
                         id: extintorId,
                         data: new Date().toLocaleString(),
                         extintor: extintorId,
-                        cliente: document.getElementById('qrClienteNome').textContent,
+                        cliente: extintorData.clienteNome || 'N/I',
                         local: extintorData.local || '-'
                     });
 
@@ -1178,90 +1314,6 @@
                 mostrarNotificacao(`❌ Erro: ${error.message}`, 'error');
             } finally {
                 document.getElementById('loadingIndicator').style.display = 'none';
-            }
-        }
-
-        // Buscar extintor na API
-        async function buscarExtintor(extintorId) {
-            if (!baserowConfig.token || !baserowConfig.tables.extintores) {
-                throw new Error('Configuração da API incompleta');
-            }
-
-            try {
-                // Tenta buscar pelo número do extintor
-                const response = await fetch(
-                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.extintores}/?user_field_names=true&filters__Nº_Extintor__equal=${encodeURIComponent(extintorId)}`,
-                    {
-                        headers: {
-                            'Authorization': `Token ${baserowConfig.token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    }
-                );
-
-                if (!response.ok) {
-                    throw new Error('Erro ao consultar API');
-                }
-
-                const data = await response.json();
-
-                if (data.results && data.results.length > 0) {
-                    const extintor = data.results[0];
-
-                    // Extrair dados
-                    return {
-                        classe: extintor.Classe || extintor.classe || '-',
-                        tipo: extintor.Tipo || extintor.tipo || '-',
-                        carga: extintor.Carga || extintor.carga || extintor.Kg || extintor.kg || '-',
-                        validade: extintor.Validade || extintor.validade || extintor['Data Validade'] || '-',
-                        recarga: extintor.Recarga || extintor.recarga || extintor['Última Recarga'] || '-',
-                        clienteId: extintor.Cliente || extintor.clienteId,
-                        clienteNome: extintor['Nome Cliente'] || extintor.clienteNome,
-                        local: extintor.Local || extintor.local || extintor['Local Instalação'] || '-',
-                        etiquetaId: extintor['ID Etiqueta'] || extintor.etiquetaId || extintor.ID_Etiqueta
-                    };
-                }
-
-                return null;
-            } catch (error) {
-                console.error('Erro em buscarExtintor:', error);
-                throw error;
-            }
-        }
-
-        // Buscar cliente na API
-        async function buscarCliente(clienteId) {
-            if (!baserowConfig.token || !baserowConfig.tables.clientes || !clienteId) {
-                return null;
-            }
-
-            try {
-                let id = clienteId;
-                if (typeof clienteId === 'object' && clienteId.id) {
-                    id = clienteId.id;
-                }
-
-                const response = await fetch(
-                    `${baserowConfig.url}database/rows/table/${baserowConfig.tables.clientes}/${id}/?user_field_names=true`,
-                    {
-                        headers: {
-                            'Authorization': `Token ${baserowConfig.token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    }
-                );
-
-                if (response.ok) {
-                    const cliente = await response.json();
-                    return {
-                        nome: cliente.Nome || cliente.nome || cliente.Cliente || 'N/I'
-                    };
-                }
-
-                return null;
-            } catch (error) {
-                console.error('Erro em buscarCliente:', error);
-                return null;
             }
         }
 
